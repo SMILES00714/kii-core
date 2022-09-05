@@ -1174,9 +1174,12 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue, int nReallocActiva
         return ret;
     }
 
-    return static_cast<CAmount>(blockValue * 1);
-}
+    static std::vector<int> vecPeriods{
+        500
+    };
 
+    return static_cast<CAmount>(blockValue * vecPeriods[0] / 1000);
+}
 bool IsInitialBlockDownload()
 {
     // Once this function has returned false, it must remain false.
