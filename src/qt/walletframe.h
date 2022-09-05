@@ -71,7 +71,7 @@ public Q_SLOTS:
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
     /** Switch to CoinJoin coins page */
-    void gotoCoinJoinCoinsPage(QString addr = "");
+   
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");

@@ -61,7 +61,6 @@ private:
     void DisableCoinJoinCompletely();
 
 private Q_SLOTS:
-    void toggleCoinJoin();
     void updateDisplayUnit();
     void updateCoinJoinProgress();
     void updateAdvancedCJUI(bool fShowAdvancedCJUI);

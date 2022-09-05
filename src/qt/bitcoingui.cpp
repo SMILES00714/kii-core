@@ -93,9 +93,9 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const NetworkStyle* networkStyle,
     masternodeButton(0),
     quitAction(0),
     sendCoinsButton(0),
-    coinJoinCoinsButton(0),
+    
     sendCoinsMenuAction(0),
-    coinJoinCoinsMenuAction(0),
+   
     usedSendingAddressesAction(0),
     usedReceivingAddressesAction(0),
     signMessageAction(0),
@@ -387,9 +387,7 @@ void BitcoinGUI::createActions()
     sendCoinsMenuAction->setStatusTip(tr("Send coins to a KII address"));
     sendCoinsMenuAction->setToolTip(sendCoinsMenuAction->statusTip());
 
-    coinJoinCoinsMenuAction = new QAction("&CoinJoin", this);
-    coinJoinCoinsMenuAction->setStatusTip(tr("Send %1 funds to a KII address").arg("CoinJoin"));
-    coinJoinCoinsMenuAction->setToolTip(coinJoinCoinsMenuAction->statusTip());
+  
 
     receiveCoinsMenuAction = new QAction(tr("&Receive"), this);
     receiveCoinsMenuAction->setStatusTip(tr("Request payments (generates QR codes and kii: URIs)"));
@@ -399,8 +397,7 @@ void BitcoinGUI::createActions()
     // can be triggered from the tray menu, and need to show the GUI to be useful.
     connect(sendCoinsMenuAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(sendCoinsMenuAction, SIGNAL(triggered()), this, SLOT(gotoSendCoinsPage()));
-    connect(coinJoinCoinsMenuAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-    connect(coinJoinCoinsMenuAction, SIGNAL(triggered()), this, SLOT(gotoCoinJoinCoinsPage()));
+
     connect(receiveCoinsMenuAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(receiveCoinsMenuAction, SIGNAL(triggered()), this, SLOT(gotoReceiveCoinsPage()));
 
@@ -576,7 +573,7 @@ void BitcoinGUI::createMenuBar()
 
     QMenu *help = appMenuBar->addMenu(tr("&Help"));
     help->addAction(showHelpMessageAction);
-    help->addAction(showCoinJoinHelpAction);
+    
     help->addSeparator();
     help->addAction(aboutAction);
     help->addAction(aboutQtAction);
@@ -616,10 +613,7 @@ void BitcoinGUI::createToolBars()
         historyButton->setStatusTip(tr("Browse transaction history"));
         tabGroup->addButton(historyButton);
 
-        coinJoinCoinsButton = new QToolButton(this);
-        coinJoinCoinsButton->setText(coinJoinCoinsMenuAction->text());
-        coinJoinCoinsButton->setStatusTip(coinJoinCoinsMenuAction->statusTip());
-        tabGroup->addButton(coinJoinCoinsButton);
+
 
         QSettings settings;
         if (settings.value("fShowMasternodesTab").toBool()) {
@@ -632,7 +626,7 @@ void BitcoinGUI::createToolBars()
 
         connect(overviewButton, SIGNAL(clicked()), this, SLOT(gotoOverviewPage()));
         connect(sendCoinsButton, SIGNAL(clicked()), this, SLOT(gotoSendCoinsPage()));
-        connect(coinJoinCoinsButton, SIGNAL(clicked()), this, SLOT(gotoCoinJoinCoinsPage()));
+    
         connect(receiveCoinsButton, SIGNAL(clicked()), this, SLOT(gotoReceiveCoinsPage()));
         connect(historyButton, SIGNAL(clicked()), this, SLOT(gotoHistoryPage()));
 
@@ -846,7 +840,7 @@ void BitcoinGUI::setWalletActionsEnabled(bool enabled)
     if (walletFrame != nullptr) {
         overviewButton->setEnabled(enabled);
         sendCoinsButton->setEnabled(enabled);
-        coinJoinCoinsButton->setEnabled(enabled && clientModel->coinJoinOptions().isEnabled());
+
         receiveCoinsButton->setEnabled(enabled);
         historyButton->setEnabled(enabled);
         if (masternodeButton != nullptr) {
@@ -858,9 +852,9 @@ void BitcoinGUI::setWalletActionsEnabled(bool enabled)
 
     sendCoinsMenuAction->setEnabled(enabled);
 #ifdef ENABLE_WALLET
-    coinJoinCoinsMenuAction->setEnabled(enabled && clientModel->coinJoinOptions().isEnabled());
+    
 #else
-    coinJoinCoinsMenuAction->setEnabled(enabled);
+    
 #endif // ENABLE_WALLET
     receiveCoinsMenuAction->setEnabled(enabled);
 
@@ -890,7 +884,7 @@ void BitcoinGUI::createIconMenu(QMenu *pmenu)
     pmenu->addAction(toggleHideAction);
     pmenu->addSeparator();
     pmenu->addAction(sendCoinsMenuAction);
-    pmenu->addAction(coinJoinCoinsMenuAction);
+    
     pmenu->addAction(receiveCoinsMenuAction);
     pmenu->addSeparator();
     pmenu->addAction(signMessageAction);
@@ -1062,8 +1056,8 @@ void BitcoinGUI::gotoSendCoinsPage(QString addr)
 
 void BitcoinGUI::gotoCoinJoinCoinsPage(QString addr)
 {
-    coinJoinCoinsButton->setChecked(true);
-    if (walletFrame) walletFrame->gotoCoinJoinCoinsPage(addr);
+
+
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
@@ -1188,11 +1182,11 @@ void BitcoinGUI::updateCoinJoinVisibility()
     // Hiding the QToolButton itself doesn't work for the GUI part
     // but is still needed for shortcuts to work properly.
     if (appToolBar != nullptr) {
-        appToolBar->actions()[4]->setVisible(fEnabled);
-        coinJoinCoinsButton->setVisible(fEnabled);
+   
+  
         GUIUtil::updateButtonGroupShortcuts(tabGroup);
     }
-    coinJoinCoinsMenuAction->setVisible(fEnabled);
+   
     showCoinJoinHelpAction->setVisible(fEnabled);
     updateWidth();
 }

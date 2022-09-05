@@ -121,7 +121,7 @@ OverviewPage::OverviewPage(QWidget* parent) :
 
     GUIUtil::setFont({ui->label_4,
                       ui->label_5,
-                      ui->labelCoinJoinHeader
+
                      }, GUIUtil::FontWeight::Bold, 16);
 
     GUIUtil::setFont({ui->labelTotalText,
@@ -149,14 +149,13 @@ OverviewPage::OverviewPage(QWidget* parent) :
 
     // init "out of sync" warning labels
     ui->labelWalletStatus->setText("(" + tr("out of sync") + ")");
-    ui->labelCoinJoinSyncStatus->setText("(" + tr("out of sync") + ")");
+
     ui->labelTransactionsStatus->setText("(" + tr("out of sync") + ")");
 
-    ui->labelAnonymizedText->setText(tr("%1 Balance").arg("CoinJoin"));
 
     // hide PS frame (helps to preserve saved size)
     // we'll setup and make it visible in coinJoinStatus() later
-    ui->frameCoinJoin->setVisible(false);
+
 
     // start with displaying the "out of sync" warnings
     showOutOfSyncWarning(true);
@@ -189,7 +188,7 @@ void OverviewPage::setBalance(const interfaces::WalletBalances& balances)
     ui->labelBalance->setText(BitcoinUnits::floorHtmlWithUnit(unit, balances.balance, false, BitcoinUnits::separatorAlways));
     ui->labelUnconfirmed->setText(BitcoinUnits::floorHtmlWithUnit(unit, balances.unconfirmed_balance, false, BitcoinUnits::separatorAlways));
     ui->labelImmature->setText(BitcoinUnits::floorHtmlWithUnit(unit, balances.immature_balance, false, BitcoinUnits::separatorAlways));
-    ui->labelAnonymized->setText(BitcoinUnits::floorHtmlWithUnit(unit, balances.anonymized_balance, false, BitcoinUnits::separatorAlways));
+    
     ui->labelTotal->setText(BitcoinUnits::floorHtmlWithUnit(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, false, BitcoinUnits::separatorAlways));
     ui->labelWatchAvailable->setText(BitcoinUnits::floorHtmlWithUnit(unit, balances.watch_only_balance, false, BitcoinUnits::separatorAlways));
     ui->labelWatchPending->setText(BitcoinUnits::floorHtmlWithUnit(unit, balances.unconfirmed_watch_only_balance, false, BitcoinUnits::separatorAlways));
@@ -281,10 +280,10 @@ void OverviewPage::setWalletModel(WalletModel *model)
         // we'll handle automatic backups and user warnings in coinJoinStatus()
         walletModel->coinJoin().disableAutobackups();
 
-        connect(ui->toggleCoinJoin, SIGNAL(clicked()), this, SLOT(toggleCoinJoin()));
+  
 
         // coinjoin buttons will not react to spacebar must be clicked on
-        ui->toggleCoinJoin->setFocusPolicy(Qt::NoFocus);
+ 
     }
 }
 
@@ -313,7 +312,7 @@ void OverviewPage::updateAlerts(const QString &warnings)
 void OverviewPage::showOutOfSyncWarning(bool fShow)
 {
     ui->labelWalletStatus->setVisible(fShow);
-    ui->labelCoinJoinSyncStatus->setVisible(fShow);
+
     ui->labelTransactionsStatus->setVisible(fShow);
 }
 
@@ -326,15 +325,13 @@ void OverviewPage::updateCoinJoinProgress()
 
     if(m_balances.balance == 0)
     {
-        ui->coinJoinProgress->setValue(0);
-        ui->coinJoinProgress->setToolTip(tr("No inputs detected"));
+
 
         // when balance is zero just show info from settings
         strCoinJoinAmount = strCoinJoinAmount.remove(strCoinJoinAmount.indexOf("."), BitcoinUnits::decimals(nDisplayUnit) + 1);
         strAmountAndRounds = strCoinJoinAmount + " / " + tr("%n Rounds", "", clientModel->coinJoinOptions().getRounds());
 
-        ui->labelAmountRounds->setToolTip(tr("No inputs detected"));
-        ui->labelAmountRounds->setText(strAmountAndRounds);
+
         return;
     }
 
@@ -348,23 +345,18 @@ void OverviewPage::updateCoinJoinProgress()
     if(nMaxToAnonymize == 0) return;
 
     if (nMaxToAnonymize >= clientModel->coinJoinOptions().getAmount() * COIN) {
-        ui->labelAmountRounds->setToolTip(tr("Found enough compatible inputs to mix %1")
-                                          .arg(strCoinJoinAmount));
+
         strCoinJoinAmount = strCoinJoinAmount.remove(strCoinJoinAmount.indexOf("."), BitcoinUnits::decimals(nDisplayUnit) + 1);
         strAmountAndRounds = strCoinJoinAmount + " / " + tr("%n Rounds", "", clientModel->coinJoinOptions().getRounds());
     } else {
         QString strMaxToAnonymize = BitcoinUnits::formatHtmlWithUnit(nDisplayUnit, nMaxToAnonymize, false, BitcoinUnits::separatorAlways);
-        ui->labelAmountRounds->setToolTip(tr("Not enough compatible inputs to mix <span style='%1'>%2</span>,<br>"
-                                             "will mix <span style='%1'>%3</span> instead")
-                                          .arg(GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_ERROR))
-                                          .arg(strCoinJoinAmount)
-                                          .arg(strMaxToAnonymize));
+
         strMaxToAnonymize = strMaxToAnonymize.remove(strMaxToAnonymize.indexOf("."), BitcoinUnits::decimals(nDisplayUnit) + 1);
         strAmountAndRounds = "<span style='" + GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_ERROR) + "'>" +
                 QString(BitcoinUnits::factor(nDisplayUnit) == 1 ? "" : "~") + strMaxToAnonymize +
                 " / " + tr("%n Rounds", "", clientModel->coinJoinOptions().getRounds()) + "</span>";
     }
-    ui->labelAmountRounds->setText(strAmountAndRounds);
+    
 
     if (!fShowAdvancedCJUI) return;
 
@@ -411,7 +403,7 @@ void OverviewPage::updateCoinJoinProgress()
     float progress = denomPartCalc + anonNormPartCalc + anonFullPartCalc;
     if(progress >= 100) progress = 100;
 
-    ui->coinJoinProgress->setValue(progress);
+
 
     QString strToolPip = ("<b>" + tr("Overall progress") + ": %1%</b><br/>" +
                           tr("Denominated") + ": %2%<br/>" +
@@ -420,7 +412,7 @@ void OverviewPage::updateCoinJoinProgress()
                           tr("Denominated inputs have %5 of %n rounds on average", "", clientModel->coinJoinOptions().getRounds()))
             .arg(progress).arg(denomPart).arg(anonNormPart).arg(anonFullPart)
             .arg(nAverageAnonymizedRounds);
-    ui->coinJoinProgress->setToolTip(strToolPip);
+
 }
 
 void OverviewPage::updateAdvancedCJUI(bool fShowAdvancedCJUI)
@@ -441,13 +433,13 @@ void OverviewPage::coinJoinStatus(bool fForce)
     if (fMasternodeMode || nWalletBackups <= 0) {
         DisableCoinJoinCompletely();
         if (nWalletBackups <= 0) {
-            ui->labelCoinJoinEnabled->setToolTip(tr("Automatic backups are disabled, no mixing available!"));
+  
         }
         return;
     }
 
     bool fIsEnabled = clientModel->coinJoinOptions().isEnabled();
-    ui->frameCoinJoin->setVisible(fIsEnabled);
+
     if (!fIsEnabled) {
         SetupTransactionList(NUM_ITEMS_DISABLED);
         if (timer != nullptr) {
@@ -465,7 +457,7 @@ void OverviewPage::coinJoinStatus(bool fForce)
     // CoinJoin UI option or not. True if it does, false if not.
     std::map<QWidget*, bool> coinJoinWidgets = {
         {ui->labelCompletitionText, true},
-        {ui->coinJoinProgress, true},
+
         {ui->labelSubmittedDenomText, true},
         {ui->labelSubmittedDenom, true},
         {ui->labelAmountAndRoundsText, false},
@@ -503,7 +495,7 @@ void OverviewPage::coinJoinStatus(bool fForce)
     if(walletModel->getKeysLeftSinceAutoBackup() < COINJOIN_KEYS_THRESHOLD_WARNING) {
         strKeysLeftText = "<span style='" + GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_ERROR) + "'>" + strKeysLeftText + "</span>";
     }
-    ui->labelCoinJoinEnabled->setToolTip(strKeysLeftText);
+
 
     if (!walletModel->coinJoin().isMixing()) {
         if (nBestHeight != walletModel->coinJoin().getCachedBlocks()) {
@@ -512,12 +504,12 @@ void OverviewPage::coinJoinStatus(bool fForce)
         }
 
         setWidgetsVisible(false);
-        ui->toggleCoinJoin->setText(tr("Start %1").arg("CoinJoin"));
+
 
         QString strEnabled = tr("Disabled");
         // Show how many keys left in advanced PS UI mode only
         if (fShowAdvancedCJUI) strEnabled += ", " + strKeysLeftText;
-        ui->labelCoinJoinEnabled->setText(strEnabled);
+
 
         // If mixing isn't active always show the lower number of txes because there are
         // anyway the most PS widgets hidden.
@@ -538,7 +530,7 @@ void OverviewPage::coinJoinStatus(bool fForce)
                                    "<span style='%1'> you should always make sure you have backups "
                                    "saved in some safe place</span>!").arg(GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_COMMAND)) + "<br><br>" +
                                 tr("Note: You can turn this message off in options.");
-            ui->labelCoinJoinEnabled->setToolTip(strWarn);
+
             LogPrint(BCLog::COINJOIN, "OverviewPage::coinJoinStatus -- Very low number of keys left since last automatic backup, warning user and trying to create new backup...\n");
             QMessageBox::warning(this, "CoinJoin", strWarn, QMessageBox::Ok, QMessageBox::Ok);
         } else {
@@ -571,7 +563,7 @@ void OverviewPage::coinJoinStatus(bool fForce)
     QString strEnabled = walletModel->coinJoin().isMixing() ? tr("Enabled") : tr("Disabled");
     // Show how many keys left in advanced PS UI mode only
     if(fShowAdvancedCJUI) strEnabled += ", " + strKeysLeftText;
-    ui->labelCoinJoinEnabled->setText(strEnabled);
+
 
     if(nWalletBackups == -1) {
         // Automatic backup failed, nothing else we can do until user fixes the issue manually
@@ -580,13 +572,13 @@ void OverviewPage::coinJoinStatus(bool fForce)
         QString strError =  tr("ERROR! Failed to create automatic backup") + ", " +
                             tr("see debug.log for details.") + "<br><br>" +
                             tr("Mixing is disabled, please close your wallet and fix the issue!");
-        ui->labelCoinJoinEnabled->setToolTip(strError);
+
 
         return;
     } else if(nWalletBackups == -2) {
         // We were able to create automatic backup but keypool was not replenished because wallet is locked.
         QString strWarning = tr("WARNING! Failed to replenish keypool, please unlock your wallet to do so.");
-        ui->labelCoinJoinEnabled->setToolTip(strWarning);
+
     }
 
     // check coinjoin status and unlock if needed
@@ -598,60 +590,10 @@ void OverviewPage::coinJoinStatus(bool fForce)
 
     setWidgetsVisible(true);
 
-    ui->labelSubmittedDenom->setText(QString(walletModel->coinJoin().getSessionDenoms().c_str()));
+
 }
 
-void OverviewPage::toggleCoinJoin(){
-    QSettings settings;
-    // Popup some information on first mixing
-    QString hasMixed = settings.value("hasMixed").toString();
-    if(hasMixed.isEmpty()){
-        QMessageBox::information(this, "CoinJoin",
-                tr("If you don't want to see internal %1 fees/transactions select \"Most Common\" as Type on the \"Transactions\" tab.").arg("CoinJoin"),
-                QMessageBox::Ok, QMessageBox::Ok);
-        settings.setValue("hasMixed", "hasMixed");
-    }
 
-    if (!walletModel->coinJoin().isMixing()) {
-        auto& options = walletModel->node().coinJoinOptions();
-        const CAmount nMinAmount = options.getSmallestDenomination() + options.getMaxCollateralAmount();
-        if(m_balances.balance < nMinAmount) {
-            QString strMinAmount(BitcoinUnits::formatWithUnit(nDisplayUnit, nMinAmount));
-            QMessageBox::warning(this, "CoinJoin",
-                tr("%1 requires at least %2 to use.").arg("CoinJoin").arg(strMinAmount),
-                QMessageBox::Ok, QMessageBox::Ok);
-            return;
-        }
-
-        // if wallet is locked, ask for a passphrase
-        if (walletModel && walletModel->getEncryptionStatus() == WalletModel::Locked)
-        {
-            WalletModel::UnlockContext ctx(walletModel->requestUnlock(true));
-            if(!ctx.isValid())
-            {
-                //unlock was cancelled
-                walletModel->coinJoin().resetCachedBlocks();
-                QMessageBox::warning(this, "CoinJoin",
-                    tr("Wallet is locked and user declined to unlock. Disabling %1.").arg("CoinJoin"),
-                    QMessageBox::Ok, QMessageBox::Ok);
-                LogPrint(BCLog::COINJOIN, "OverviewPage::toggleCoinJoin -- Wallet is locked and user declined to unlock. Disabling CoinJoin.\n");
-                return;
-            }
-        }
-
-    }
-
-    walletModel->coinJoin().resetCachedBlocks();
-
-    if (walletModel->coinJoin().isMixing()) {
-        ui->toggleCoinJoin->setText(tr("Start %1").arg("CoinJoin"));
-        walletModel->coinJoin().resetPool();
-        walletModel->coinJoin().stopMixing();
-    } else {
-        ui->toggleCoinJoin->setText(tr("Stop %1").arg("CoinJoin"));
-        walletModel->coinJoin().startMixing();
-    }
-}
 
 void OverviewPage::SetupTransactionList(int nNumItems)
 {
@@ -684,8 +626,7 @@ void OverviewPage::DisableCoinJoinCompletely()
         return;
     }
 
-    ui->toggleCoinJoin->setText("(" + tr("Disabled") + ")");
-    ui->frameCoinJoin->setEnabled(false);
+
     if (nWalletBackups <= 0) {
         ui->labelCoinJoinEnabled->setText("<span style='" + GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_ERROR) + "'>(" + tr("Disabled") + ")</span>");
     }

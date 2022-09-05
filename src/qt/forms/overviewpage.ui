@@ -116,7 +116,7 @@
                <string>Unconfirmed transactions to watch-only addresses</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 BTC</string>
+               <string notr="true">0.000 000 00 BTC</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -135,7 +135,7 @@
                <string>Total of transactions that have yet to be confirmed, and do not yet count toward the spendable balance</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 BTC</string>
+               <string notr="true">0.000 000 00 BTC</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -154,7 +154,7 @@
                <string>Mined balance in watch-only addresses that has not yet matured</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 BTC</string>
+               <string notr="true">0.000 000 00 BTC</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -206,7 +206,7 @@
                <string>Mined balance that has not yet matured</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 BTC</string>
+               <string notr="true">0.000 000 00 BTC</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -245,7 +245,7 @@
                <string>Your current total balance</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 BTC</string>
+               <string notr="true">0.000 000 00 BTC</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -264,7 +264,7 @@
                <string>Current total balance in watch-only addresses</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 BTC</string>
+               <string notr="true">0.000 000 00 BTC</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -300,7 +300,7 @@
                <string>Your current spendable balance</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 BTC</string>
+               <string notr="true">0.000 000 00 BTC</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -319,7 +319,7 @@
                <string>Your current balance in watch-only addresses</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 BTC</string>
+               <string notr="true">0.000 000 00 BTC</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -367,19 +367,11 @@
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QLabel" name="labelCoinJoinHeader">
-              <property name="text">
-               <string notr="true">CoinJoin</string>
-              </property>
+
              </widget>
             </item>
             <item>
              <widget class="QLabel" name="labelCoinJoinSyncStatus">
-              <property name="toolTip">
-               <string>The displayed information may be out of date. Your wallet automatically synchronizes with the KII network after a connection is established, but this process has not completed yet.</string>
-              </property>
-              <property name="text">
-               <string notr="true">(out of sync)</string>
-              </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
@@ -413,31 +405,22 @@
             </property>
             <item row="0" column="0">
              <widget class="QLabel" name="labelCoinJoinEnabledText">
-              <property name="text">
-               <string>Status:</string>
-              </property>
              </widget>
             </item>
             <item row="0" column="1">
              <widget class="QLabel" name="labelCoinJoinEnabled">
-              <property name="text">
-               <string>Enabled/Disabled</string>
-              </property>
              </widget>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="labelCompletitionText">
-              <property name="text">
-               <string>Completion:</string>
-              </property>
              </widget>
             </item>
             <item row="1" column="1">
              <widget class="QProgressBar" name="coinJoinProgress">
               <property name="maximumSize">
                <size>
-                <width>154</width>
-                <height>16777215</height>
+                <width>0</width>
+                <height>0</height>
                </size>
               </property>
               <property name="value">
@@ -447,50 +430,32 @@
             </item>
             <item row="2" column="0">
              <widget class="QLabel" name="labelAnonymizedText">
-              <property name="text">
-               <string notr="true">CoinJoin Balance:</string>
-              </property>
+
              </widget>
             </item>
             <item row="2" column="1">
              <widget class="QLabel" name="labelAnonymized">
-              <property name="text">
-               <string notr="true">0 KII</string>
-              </property>
+
              </widget>
             </item>
             <item row="3" column="0">
              <widget class="QLabel" name="labelAmountAndRoundsText">
-              <property name="text">
-               <string>Amount and Rounds:</string>
-              </property>
+
              </widget>
             </item>
             <item row="3" column="1">
              <widget class="QLabel" name="labelAmountRounds">
-              <property name="text">
-               <string>0 KII / 0 Rounds</string>
-              </property>
+
              </widget>
             </item>
             <item row="4" column="0">
              <widget class="QLabel" name="labelSubmittedDenomText">
-              <property name="text">
-               <string>Submitted Denom:</string>
-              </property>
+
              </widget>
             </item>
             <item row="4" column="1">
              <widget class="QLabel" name="labelSubmittedDenom">
-              <property name="toolTip">
-               <string>The denominations you submitted to the Masternode.&lt;br&gt;To mix, other users must submit the exact same denominations.</string>
-              </property>
-              <property name="text">
-               <string>n/a</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
+ 
              </widget>
             </item>
            </layout>
@@ -515,19 +480,7 @@
                 </property>
                </spacer>
               </item>
-              <item>
-               <widget class="QPushButton" name="toggleCoinJoin">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Start/Stop Mixing</string>
-                </property>
-               </widget>
-              </item>
+             
               <item>
                <spacer name="horizontalSpacer_6">
                 <property name="orientation">

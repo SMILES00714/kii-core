@@ -1,4 +1,4 @@
-KII Core version 1.0.1.0
+KII Core version 1.0.1.2
 ==========================
 
 Release is now available from:
@@ -264,7 +264,7 @@ Miscellaneous
 -------------
 A lot of refactoring, code cleanups and other small fixes were done in this release.
 
-1.0.1.0 Change log
+1.0.1.2 Change log
 ===================
 
 See detailed [set of changes](https://github.com/kiipay/kii/compare/v0.16.1.1...kiipay:v0.17.0.3).
