@@ -406,7 +406,7 @@ and inputs.
 
 For example:
 ```bash
-URL=https://github.com/kiiglobal/kii.git
+URL=https://github.com/kiiglobal/kii-core.git
 COMMIT=b616fb8ef0d49a919b72b0388b091aaec5849b96
 ./bin/gbuild --commit kii=${COMMIT} --url kii=${URL} ../kii/contrib/gitian-descriptors/gitian-linux.yml
 ./bin/gbuild --commit kii=${COMMIT} --url kii=${URL} ../kii/contrib/gitian-descriptors/gitian-win.yml
