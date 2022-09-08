@@ -32,7 +32,7 @@ If you're using the automated script (found in [contrib/gitian-build.py](/contri
 Check out the source code in the following directory hierarchy.
 
 	cd /path/to/your/toplevel/build
-	git clone https://github.com/kiiglobal/kii.git
+	git clone https://github.com/kiiglobal/kii-core.git
 
 ### KII Core maintainers/release engineers, suggestion for writing release notes
 
