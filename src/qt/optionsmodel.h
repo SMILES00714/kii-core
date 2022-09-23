@@ -59,13 +59,8 @@ public:
         DatabaseCache,          // int
         SpendZeroConfChange,    // bool
         ShowMasternodesTab,     // bool
-        CoinJoinEnabled,     // bool
         ShowAdvancedCJUI,       // bool
-        ShowCoinJoinPopups,  // bool
         LowKeysWarning,         // bool
-        CoinJoinRounds,      // int
-        CoinJoinAmount,      // int
-        CoinJoinMultiSession,// bool
         Listen,                 // bool
         OptionIDRowCount,
     };
@@ -89,7 +84,6 @@ public:
     bool getCoinControlFeatures() const { return fCoinControlFeatures; }
     bool getShowAdvancedCJUI() { return fShowAdvancedCJUI; }
     const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
-    void emitCoinJoinEnabledChanged();
 
     /* Restart flag helper */
     void setRestartRequired(bool fRequired);
@@ -119,12 +113,10 @@ private:
     void checkAndMigrate();
 Q_SIGNALS:
     void displayUnitChanged(int unit);
-    void coinJoinEnabledChanged();
-    void coinJoinRoundsChanged();
-    void coinJoinAmountChanged();
     void AdvancedCJUIChanged(bool);
     void coinControlFeaturesChanged(bool);
     void hideTrayIconChanged(bool);
 };
 
 #endif // BITCOIN_QT_OPTIONSMODEL_H
+

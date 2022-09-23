@@ -36,7 +36,6 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(interfaces::Wal
     uint256 hash = wtx.tx->GetHash();
     std::map<std::string, std::string> mapValue = wtx.value_map;
     auto node = interfaces::MakeNode();
-    auto& coinJoinOptions = node->coinJoinOptions();
 
     if (nNet > 0 || wtx.is_coinbase)
     {
@@ -96,7 +95,6 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(interfaces::Wal
         }
 
         if(wtx.is_denominate) {
-            parts.append(TransactionRecord(hash, nTime, TransactionRecord::CoinJoinMixing, "", -nDebit, nCredit));
             parts.last().involvesWatchAddress = false;   // maybe pass to TransactionRecord as constructor argument
         }
         else if (fAllFromMe && fAllToMe)
@@ -112,7 +110,6 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(interfaces::Wal
 
             if(mapValue["DS"] == "1")
             {
-                sub.type = TransactionRecord::CoinJoinSend;
                 CTxDestination address;
                 if (ExtractDestination(wtx.tx->vout[0].scriptPubKey, address))
                 {
@@ -126,41 +123,6 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(interfaces::Wal
                     // Sent to IP, or other non-address transaction like OP_EVAL
                     sub.strAddress = mapValue["to"];
                     sub.txDest = DecodeDestination(sub.strAddress);
-                }
-            }
-            else
-            {
-                sub.idx = parts.size();
-                if(wtx.tx->vin.size() == 1 && wtx.tx->vout.size() == 1
-                    && coinJoinOptions.isCollateralAmount(nDebit)
-                    && coinJoinOptions.isCollateralAmount(nCredit)
-                    && coinJoinOptions.isCollateralAmount(-nNet))
-                {
-                    sub.type = TransactionRecord::CoinJoinCollateralPayment;
-                } else {
-                    bool fMakeCollateral{false};
-                    if (wtx.tx->vout.size() == 2) {
-                        CAmount nAmount0 = wtx.tx->vout[0].nValue;
-                        CAmount nAmount1 = wtx.tx->vout[1].nValue;
-                        // <case1>, see CCoinJoinClientSession::MakeCollateralAmounts
-                        fMakeCollateral = (nAmount0 == coinJoinOptions.getMaxCollateralAmount() && !coinJoinOptions.isDenominated(nAmount1) && nAmount1 >= coinJoinOptions.getMinCollateralAmount()) ||
-                                          (nAmount1 == coinJoinOptions.getMaxCollateralAmount() && !coinJoinOptions.isDenominated(nAmount0) && nAmount0 >= coinJoinOptions.getMinCollateralAmount()) ||
-                        // <case2>, see CCoinJoinClientSession::MakeCollateralAmounts
-                                          (nAmount0 == nAmount1 && coinJoinOptions.isCollateralAmount(nAmount0));
-                    } else if (wtx.tx->vout.size() == 1) {
-                        // <case3>, see CCoinJoinClientSession::MakeCollateralAmounts
-                        fMakeCollateral = coinJoinOptions.isCollateralAmount(wtx.tx->vout[0].nValue);
-                    }
-                    if (fMakeCollateral) {
-                        sub.type = TransactionRecord::CoinJoinMakeCollaterals;
-                    } else {
-                        for (const auto& txout : wtx.tx->vout) {
-                            if (coinJoinOptions.isDenominated(txout.nValue)) {
-                                sub.type = TransactionRecord::CoinJoinCreateDenominations;
-                                break; // Done, it's definitely a tx creating mixing denoms, no need to look any further
-                            }
-                        }
-                    }
                 }
             }
 
@@ -179,18 +141,6 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(interfaces::Wal
             CAmount nTxFee = nDebit - wtx.tx->GetValueOut();
 
             bool fDone = false;
-            if(wtx.tx->vin.size() == 1 && wtx.tx->vout.size() == 1
-                && coinJoinOptions.isCollateralAmount(nDebit)
-                && nCredit == 0 // OP_RETURN
-                && coinJoinOptions.isCollateralAmount(-nNet))
-            {
-                TransactionRecord sub(hash, nTime);
-                sub.idx = 0;
-                sub.type = TransactionRecord::CoinJoinCollateralPayment;
-                sub.debit = -nDebit;
-                parts.append(sub);
-                fDone = true;
-            }
 
             for (unsigned int nOut = 0; nOut < wtx.tx->vout.size() && !fDone; nOut++)
             {
@@ -220,11 +170,6 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(interfaces::Wal
                     sub.type = TransactionRecord::SendToOther;
                     sub.strAddress = mapValue["to"];
                     sub.txDest = DecodeDestination(sub.strAddress);
-                }
-
-                if(mapValue["DS"] == "1")
-                {
-                    sub.type = TransactionRecord::CoinJoinSend;
                 }
 
                 CAmount nValue = txout.nValue;
@@ -354,3 +299,4 @@ int TransactionRecord::getOutputIndex() const
 {
     return idx;
 }
+

@@ -84,16 +84,7 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
 
     pageButtons = new QButtonGroup(this);
     pageButtons->addButton(ui->btnMain, pageButtons->buttons().size());
-    /* Remove Wallet/CoinJoin tabs in case of -disablewallet */
-    if (!enableWallet) {
-        ui->stackedWidgetOptions->removeWidget(ui->pageWallet);
-        ui->btnWallet->hide();
-
-
-    } else {
-        pageButtons->addButton(ui->btnWallet, pageButtons->buttons().size());
-
-    }
+    pageButtons->addButton(ui->btnWallet, pageButtons->buttons().size());
     pageButtons->addButton(ui->btnNetwork, pageButtons->buttons().size());
     pageButtons->addButton(ui->btnDisplay, pageButtons->buttons().size());
     pageButtons->addButton(ui->btnAppearance, pageButtons->buttons().size());
@@ -193,12 +184,7 @@ void OptionsDialog::setModel(OptionsModel *_model)
 
 
 #ifdef ENABLE_WALLET
-        // If -enablecoinjoin was passed in on the command line, set the checkbox
-        // to the value given via commandline and disable it (make it unclickable).
-        if (strLabel.contains("-enablecoinjoin")) {
- 
 
-        }
 #endif
 
         mapper->setModel(_model);
@@ -228,17 +214,8 @@ void OptionsDialog::setModel(OptionsModel *_model)
     connect(ui->thirdPartyTxUrls, SIGNAL(textChanged(const QString &)), this, SLOT(showRestartWarning()));
 
 
-
-    updateCoinJoinVisibility();
-
-    // Store the current CoinJoin enabled state to recover it if it gets changed but the dialog gets not accepted but declined.
 #ifdef ENABLE_WALLET
-    fCoinJoinEnabledPrev = model->node().coinJoinOptions().isEnabled();
-    connect(this, &OptionsDialog::rejected, [=]() {
-        if (fCoinJoinEnabledPrev != model->node().coinJoinOptions().isEnabled()) {
 
-        }
-    });
 #endif
 }
 
@@ -336,7 +313,6 @@ void OptionsDialog::on_okButton_clicked()
     appearance->accept();
 #ifdef ENABLE_WALLET
     for (auto& wallet : model->node().getWallets()) {
-        wallet->coinJoin().resetCachedBlocks();
         wallet->markDirty();
     }
 #endif // ENABLE_WALLET
@@ -426,16 +402,6 @@ void OptionsDialog::updateDefaultProxyNets()
     (strProxy == strDefaultProxyGUI.toStdString()) ? ui->proxyReachTor->setChecked(true) : ui->proxyReachTor->setChecked(false);
 }
 
-void OptionsDialog::updateCoinJoinVisibility()
-{
-#ifdef ENABLE_WALLET
-    bool fEnabled = model->node().coinJoinOptions().isEnabled();
-#else
-    bool fEnabled = false;
-#endif
-
-    GUIUtil::updateButtonGroupShortcuts(pageButtons);
-}
 
 void OptionsDialog::updateWidth()
 {
@@ -480,3 +446,4 @@ QValidator::State ProxyAddressValidator::validate(QString &input, int &pos) cons
 
     return QValidator::Invalid;
 }
+

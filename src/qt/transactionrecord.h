@@ -90,13 +90,7 @@ public:
         SendToOther,
         RecvWithAddress,
         RecvFromOther,
-        SendToSelf,
-        RecvWithCoinJoin,
-        CoinJoinMixing,
-        CoinJoinCollateralPayment,
-        CoinJoinMakeCollaterals,
-        CoinJoinCreateDenominations,
-        CoinJoinSend
+        SendToSelf
     };
 
     /** Number of confirmation recommended for accepting a transaction */
@@ -173,3 +167,4 @@ public:
 };
 
 #endif // BITCOIN_QT_TRANSACTIONRECORD_H
+

@@ -35,8 +35,7 @@ WalletModel::WalletModel(std::unique_ptr<interfaces::Wallet> wallet, interfaces:
     recentRequestsTableModel(0),
     cachedEncryptionStatus(Unencrypted),
     cachedNumBlocks(-1),
-    cachedNumISLocks(0),
-    cachedCoinJoinRounds(0)
+    cachedNumISLocks(0)
 {
     fHaveWatchOnly = m_wallet->haveWatchOnly();
     fForceCheckBalanceChanged = false;
@@ -79,13 +78,12 @@ void WalletModel::pollBalanceChanged()
         return;
     }
 
-    if(fForceCheckBalanceChanged || numBlocks != cachedNumBlocks || node().coinJoinOptions().getRounds() != cachedCoinJoinRounds)
+    if(fForceCheckBalanceChanged || numBlocks != cachedNumBlocks)
     {
         fForceCheckBalanceChanged = false;
 
         // Balance and number of transactions might have changed
         cachedNumBlocks = numBlocks;
-        cachedCoinJoinRounds = node().coinJoinOptions().getRounds();
 
         checkBalanceChanged(new_balances);
         if(transactionTableModel)
@@ -128,11 +126,6 @@ int WalletModel::getNumBlocks() const
 int WalletModel::getNumISLocks() const
 {
     return cachedNumISLocks;
-}
-
-int WalletModel::getRealOutpointCoinJoinRounds(const COutPoint& outpoint) const
-{
-    return m_wallet->getRealOutpointCoinJoinRounds(outpoint);
 }
 
 bool WalletModel::isFullyMixed(const COutPoint& outpoint) const
@@ -267,7 +260,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
     return SendCoinsReturn(OK);
 }
 
-WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &transaction, bool fIsCoinJoin)
+WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &transaction)
 {
     QByteArray transaction_array; /* store serialized transaction */
 
@@ -292,9 +285,6 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &tran
         }
 
         mapValue_t mapValue;
-        if (fIsCoinJoin) {
-            mapValue["DS"] = "1";
-        }
 
         auto& newTx = transaction.getWtx();
         std::string rejectReason;
@@ -602,3 +592,4 @@ bool WalletModel::isMultiwallet()
 {
     return m_node.getWallets().size() > 1;
 }
+

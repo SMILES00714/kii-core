@@ -10,9 +10,7 @@ sys.path.append(os.getcwd())
 simple_types = ["CMasternode", "CMasternodeVerification",
                 "CMasternodeBroadcast", "CMasternodePing",
                 "CMasternodeMan", "CDarksendQueue", "CDarkSendEntry",
-                "CTransaction", "CMutableTransaction", "CCoinJoinBaseSession",
-                "CCoinJoinBaseManager", "CCoinJoinClientSession",
-                "CCoinJoinClientManager", "CCoinJoinServer", "CMasternodePayments",
+                "CTransaction", "CMutableTransaction", "CMasternodePayments",
                 "CMasternodePaymentVote", "CMasternodeBlockPayees",
                 "CMasternodePayee", "CInstantSend", "CTxLockRequest",
                 "CTxLockVote", "CTxLockCandidate", "COutPoint",
@@ -52,3 +50,4 @@ class SimpleClassObj:
             # process simple field
             size += common_helpers.get_instance_size(self.obj[f.name])
         return size
+

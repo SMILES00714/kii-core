@@ -1145,7 +1145,7 @@ static UniValue getinfo_deprecated(const JSONRPCRequest& request)
         "\nThis call was removed in version 0.16.0. Use the appropriate fields from:\n"
         "- getblockchaininfo: blocks, difficulty, chain\n"
         "- getnetworkinfo: version, protocolversion, timeoffset, connections, proxy, relayfee, warnings\n"
-        "- getwalletinfo: balance, coinjoin_balance, keypoololdest, keypoolsize, paytxfee, unlocked_until, walletversion\n"
+        "- getwalletinfo: balance, keypoololdest, keypoolsize, paytxfee, unlocked_until, walletversion\n"
         "\nkii-cli has the option -getinfo to collect and format these in the old format."
     );
 }
@@ -1186,3 +1186,4 @@ void RegisterMiscRPCCommands(CRPCTable &t)
     for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
         t.appendCommand(commands[vcidx].name, &commands[vcidx]);
 }
+

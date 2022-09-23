@@ -19,7 +19,6 @@
 #include <txdb.h> // for -dbcache defaults
 
 #ifdef ENABLE_WALLET
-#include <coinjoin/coinjoin-client-options.h>
 #endif
 
 #include <QNetworkProxy>
@@ -147,20 +146,9 @@ void OptionsModel::Init(bool resetSettings)
     if (!settings.contains("digits"))
         settings.setValue("digits", "2");
 
-    // CoinJoin
-    if (!settings.contains("fCoinJoinEnabled")) {
-        settings.setValue("fCoinJoinEnabled", true);
-    }
-    if (!gArgs.SoftSetBoolArg("-enablecoinjoin", settings.value("fCoinJoinEnabled").toBool())) {
-        addOverriddenOption("-enablecoinjoin");
-    }
-
     if (!settings.contains("fShowAdvancedCJUI"))
         settings.setValue("fShowAdvancedCJUI", false);
     fShowAdvancedCJUI = settings.value("fShowAdvancedCJUI", false).toBool();
-
-    if (!settings.contains("fShowCoinJoinPopups"))
-        settings.setValue("fShowCoinJoinPopups", true);
 
     if (!settings.contains("fLowKeysWarning"))
         settings.setValue("fLowKeysWarning", true);
@@ -192,29 +180,6 @@ void OptionsModel::Init(bool resetSettings)
     if (!m_node.softSetBoolArg("-spendzeroconfchange", settings.value("bSpendZeroConfChange").toBool()))
         addOverriddenOption("-spendzeroconfchange");
 
-    // CoinJoin
-    if (!settings.contains("nCoinJoinRounds"))
-        settings.setValue("nCoinJoinRounds", DEFAULT_COINJOIN_ROUNDS);
-    if (!m_node.softSetArg("-coinjoinrounds", settings.value("nCoinJoinRounds").toString().toStdString()))
-        addOverriddenOption("-coinjoinrounds");
-    m_node.coinJoinOptions().setRounds(settings.value("nCoinJoinRounds").toInt());
-
-    if (!settings.contains("nCoinJoinAmount")) {
-        // for migration from old settings
-        if (!settings.contains("nAnonymizeKIIAmount"))
-            settings.setValue("nCoinJoinAmount", DEFAULT_COINJOIN_AMOUNT);
-        else
-            settings.setValue("nCoinJoinAmount", settings.value("nAnonymizeKIIAmount").toInt());
-    }
-    if (!m_node.softSetArg("-coinjoinamount", settings.value("nCoinJoinAmount").toString().toStdString()))
-        addOverriddenOption("-coinjoinamount");
-    m_node.coinJoinOptions().setAmount(settings.value("nCoinJoinAmount").toInt());
-
-    if (!settings.contains("fCoinJoinMultiSession"))
-        settings.setValue("fCoinJoinMultiSession", DEFAULT_COINJOIN_MULTISESSION);
-    if (!m_node.softSetBoolArg("-coinjoinmultisession", settings.value("fCoinJoinMultiSession").toBool()))
-        addOverriddenOption("-coinjoinmultisession");
-    m_node.coinJoinOptions().setMultiSessionEnabled(settings.value("fCoinJoinMultiSession").toBool());
 #endif
 
     // Network
@@ -372,20 +337,10 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
             return settings.value("bSpendZeroConfChange");
         case ShowMasternodesTab:
             return settings.value("fShowMasternodesTab");
-        case CoinJoinEnabled:
-            return settings.value("fCoinJoinEnabled");
         case ShowAdvancedCJUI:
             return fShowAdvancedCJUI;
-        case ShowCoinJoinPopups:
-            return settings.value("fShowCoinJoinPopups");
         case LowKeysWarning:
             return settings.value("fLowKeysWarning");
-        case CoinJoinRounds:
-            return settings.value("nCoinJoinRounds");
-        case CoinJoinAmount:
-            return settings.value("nCoinJoinAmount");
-        case CoinJoinMultiSession:
-            return settings.value("fCoinJoinMultiSession");
 #endif
         case DisplayUnit:
             return nDisplayUnit;
@@ -529,12 +484,6 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
                 setRestartRequired(true);
             }
             break;
-        case CoinJoinEnabled:
-            if (settings.value("fCoinJoinEnabled") != value) {
-                settings.setValue("fCoinJoinEnabled", value.toBool());
-                Q_EMIT coinJoinEnabledChanged();
-            }
-            break;
         case ShowAdvancedCJUI:
             if (settings.value("fShowAdvancedCJUI") != value) {
                 fShowAdvancedCJUI = value.toBool();
@@ -542,34 +491,8 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
                 Q_EMIT AdvancedCJUIChanged(fShowAdvancedCJUI);
             }
             break;
-        case ShowCoinJoinPopups:
-            settings.setValue("fShowCoinJoinPopups", value);
-            break;
         case LowKeysWarning:
             settings.setValue("fLowKeysWarning", value);
-            break;
-        case CoinJoinRounds:
-            if (settings.value("nCoinJoinRounds") != value)
-            {
-                m_node.coinJoinOptions().setRounds(value.toInt());
-                settings.setValue("nCoinJoinRounds", m_node.coinJoinOptions().getRounds());
-                Q_EMIT coinJoinRoundsChanged();
-            }
-            break;
-        case CoinJoinAmount:
-            if (settings.value("nCoinJoinAmount") != value)
-            {
-                m_node.coinJoinOptions().setAmount(value.toInt());
-                settings.setValue("nCoinJoinAmount", m_node.coinJoinOptions().getAmount());
-                Q_EMIT coinJoinAmountChanged();
-            }
-            break;
-        case CoinJoinMultiSession:
-            if (settings.value("fCoinJoinMultiSession") != value)
-            {
-                m_node.coinJoinOptions().setMultiSessionEnabled(value.toBool());
-                settings.setValue("fCoinJoinMultiSession", m_node.coinJoinOptions().isMultiSessionEnabled());
-            }
             break;
 #endif
         case DisplayUnit:
@@ -689,11 +612,6 @@ bool OptionsModel::getProxySettings(QNetworkProxy& proxy) const
     return false;
 }
 
-void OptionsModel::emitCoinJoinEnabledChanged()
-{
-    Q_EMIT coinJoinEnabledChanged();
-}
-
 void OptionsModel::setRestartRequired(bool fRequired)
 {
     QSettings settings;
@@ -752,30 +670,5 @@ void OptionsModel::checkAndMigrate()
         settings.setValue("theme", GUIUtil::getDefaultTheme());
     }
 
-    // begin PrivateSend -> CoinJoin migration
-    if (settings.contains("nPrivateSendRounds") && !settings.contains("nCoinJoinRounds")) {
-        settings.setValue("nCoinJoinRounds", settings.value("nPrivateSendRounds").toInt());
-        settings.remove("nPrivateSendRounds");
-    }
-    if (settings.contains("nPrivateSendAmount") && !settings.contains("nCoinJoinAmount")) {
-        settings.setValue("nCoinJoinAmount", settings.value("nPrivateSendAmount").toInt());
-        settings.remove("nPrivateSendAmount");
-    }
-    if (settings.contains("fPrivateSendEnabled") && !settings.contains("fCoinJoinEnabled")) {
-        settings.setValue("fCoinJoinEnabled", settings.value("fPrivateSendEnabled").toBool());
-        settings.remove("fPrivateSendEnabled");
-    }
-    if (settings.contains("fPrivateSendMultiSession") && !settings.contains("fCoinJoinMultiSession")) {
-        settings.setValue("fCoinJoinMultiSession", settings.value("fPrivateSendMultiSession").toBool());
-        settings.remove("fPrivateSendMultiSession");
-    }
-    if (settings.contains("fShowAdvancedPSUI") && !settings.contains("fShowAdvancedCJUI")) {
-        settings.setValue("fShowAdvancedCJUI", settings.value("fShowAdvancedPSUI").toBool());
-        settings.remove("fShowAdvancedPSUI");
-    }
-    if (settings.contains("fShowPrivateSendPopups") && !settings.contains("fShowCoinJoinPopups")) {
-        settings.setValue("fShowCoinJoinPopups", settings.value("fShowPrivateSendPopups").toBool());
-        settings.remove("fShowPrivateSendPopups");
-    }
-    // end PrivateSend -> CoinJoin migration
 }
+

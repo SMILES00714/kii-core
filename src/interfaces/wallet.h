@@ -40,24 +40,6 @@ struct WalletTxStatus;
 using WalletOrderForm = std::vector<std::pair<std::string, std::string>>;
 using WalletValueMap = std::map<std::string, std::string>;
 
-namespace CoinJoin {
-//! Interface for the wallet constrained src/coinjoin part of a kii node (kiid process).
-class Client
-{
-public:
-    virtual ~Client() {}
-    virtual void resetCachedBlocks() = 0;
-    virtual void resetPool() = 0;
-    virtual int getCachedBlocks() = 0;
-    virtual std::string getSessionDenoms() = 0;
-    virtual void setCachedBlocks(int nCachedBlocks) = 0;
-    virtual void disableAutobackups() = 0;
-    virtual bool isMixing() = 0;
-    virtual bool startMixing() = 0;
-    virtual void stopMixing() = 0;
-};
-}
-
 //! Interface for accessing a wallet.
 class Wallet
 {
@@ -191,9 +173,6 @@ public:
         int& num_blocks,
         int64_t& adjusted_time) = 0;
 
-    // Get the number of coinjoin rounds an output went through
-    virtual int getRealOutpointCoinJoinRounds(const COutPoint& outpoint) = 0;
-
     // Check if an outpoint is fully mixed
     virtual bool isFullyMixed(const COutPoint& outpoint) = 0;
 
@@ -205,21 +184,6 @@ public:
 
     //! Get balance.
     virtual CAmount getBalance() = 0;
-
-    //! Get anonymizable balance.
-    virtual CAmount getAnonymizableBalance(bool fSkipDenominated, bool fSkipUnconfirmed) = 0;
-
-    //! Get anonymized balance.
-    virtual CAmount getAnonymizedBalance() = 0;
-
-    //! Get denominated balance.
-    virtual CAmount getDenominatedBalance(bool unconfirmed) = 0;
-
-    //! Get normalized anonymized balance.
-    virtual CAmount getNormalizedAnonymizedBalance() = 0;
-
-    //! Get average anonymized rounds.
-    virtual CAmount getAverageAnonymizedRounds() = 0;
 
     //! Get available balance.
     virtual CAmount getAvailableBalance(const CCoinControl& coin_control) = 0;
@@ -246,8 +210,6 @@ public:
 
     // Return whether HD enabled.
     virtual bool hdEnabled() = 0;
-
-    virtual CoinJoin::Client& coinJoin() = 0;
 
     //! Register handler for unload message.
     using UnloadFn = std::function<void()>;
@@ -322,7 +284,6 @@ struct WalletBalances
     CAmount balance = 0;
     CAmount unconfirmed_balance = 0;
     CAmount immature_balance = 0;
-    CAmount anonymized_balance = 0;
     bool have_watch_only = false;
     CAmount watch_only_balance = 0;
     CAmount unconfirmed_watch_only_balance = 0;
@@ -330,7 +291,7 @@ struct WalletBalances
 
     bool balanceChanged(const WalletBalances& prev) const
     {
-        return balance != prev.balance || unconfirmed_balance != prev.unconfirmed_balance ||  anonymized_balance != prev.anonymized_balance ||
+        return balance != prev.balance || unconfirmed_balance != prev.unconfirmed_balance ||
                immature_balance != prev.immature_balance || watch_only_balance != prev.watch_only_balance ||
                unconfirmed_watch_only_balance != prev.unconfirmed_watch_only_balance ||
                immature_watch_only_balance != prev.immature_watch_only_balance;
@@ -388,3 +349,4 @@ std::unique_ptr<Wallet> MakeWallet(const std::shared_ptr<CWallet>& wallet);
 } // namespace interfaces
 
 #endif // BITCOIN_INTERFACES_WALLET_H
+

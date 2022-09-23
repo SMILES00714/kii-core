@@ -37,7 +37,6 @@ public:
     void showOutOfSyncWarning(bool fShow);
 
 public Q_SLOTS:
-    void coinJoinStatus(bool fForce = false);
     void setBalance(const interfaces::WalletBalances& balances);
 
 Q_SIGNALS:
@@ -58,11 +57,9 @@ private:
     std::unique_ptr<TransactionFilterProxy> filter;
 
     void SetupTransactionList(int nNumItems);
-    void DisableCoinJoinCompletely();
 
 private Q_SLOTS:
     void updateDisplayUnit();
-    void updateCoinJoinProgress();
     void updateAdvancedCJUI(bool fShowAdvancedCJUI);
     void handleTransactionClicked(const QModelIndex &index);
     void updateAlerts(const QString &warnings);
@@ -71,3 +68,4 @@ private Q_SLOTS:
 };
 
 #endif // BITCOIN_QT_OVERVIEWPAGE_H
+

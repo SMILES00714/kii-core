@@ -6,8 +6,6 @@
 #include <util.h>
 #include <utilmoneystr.h>
 
-#include <coinjoin/coinjoin.h>
-
 // Descending order comparator
 struct {
     bool operator()(const CInputCoin& a, const CInputCoin& b) const
@@ -219,10 +217,7 @@ static void ApproximateBestSubset(const std::vector<CInputCoin>& vValue, const C
 
 int CInputCoin::Priority() const
 {
-    for (const auto& d : CCoinJoin::GetStandardDenominations()) {
-        // large denoms have lower value
-        if (txout.nValue == d) return (float)COIN / d * 10000;
-    }
+
     if (txout.nValue < 1 * COIN) return 20000;
 
     //nondenom return largest first
@@ -237,19 +232,6 @@ struct CompareByPriority
         return coin1.Priority() > coin2.Priority();
     }
 };
-
-// move denoms down
-bool less_then_denom (const CInputCoin& coin1, const CInputCoin& coin2)
-{
-    bool found1 = false;
-    bool found2 = false;
-    for (const auto& d : CCoinJoin::GetStandardDenominations()) // loop through predefined denoms
-    {
-        if(coin1.txout.nValue == d) found1 = true;
-        if(coin2.txout.nValue == d) found2 = true;
-    }
-    return (!found1 && found2);
-}
 
 bool KnapsackSolver(const CAmount& nTargetValue, std::vector<CInputCoin>& vCoins, std::set<CInputCoin>& setCoinsRet, CAmount& nValueRet, bool fFulyMixedOnly, CAmount maxTxFee)
 {
@@ -273,11 +255,7 @@ bool KnapsackSolver(const CAmount& nTargetValue, std::vector<CInputCoin>& vCoins
         tryDenomStart = 1;
         // no change is allowed
         nMinChange = 0;
-    } else {
-        // move denoms down on the list
-        // try not to use denominated coins when not needed, save denoms for coinjoin
-        std::sort(vCoins.begin(), vCoins.end(), less_then_denom);
-    }
+    } 
 
     // try to find nondenom first to prevent unneeded spending of mixed coins
     for (unsigned int tryDenom = tryDenomStart; tryDenom < 2; tryDenom++)
@@ -287,7 +265,6 @@ bool KnapsackSolver(const CAmount& nTargetValue, std::vector<CInputCoin>& vCoins
         nTotalLower = 0;
         for (const CInputCoin &coin : vCoins)
         {
-            if (tryDenom == 0 && CCoinJoin::IsDenominatedAmount(coin.txout.nValue)) continue; // we don't want denom values on first run
 
             if (coin.txout.nValue == nTargetValue)
             {
@@ -373,3 +350,4 @@ bool KnapsackSolver(const CAmount& nTargetValue, std::vector<CInputCoin>& vCoins
     // can see if we exceeded the max fee and thus fail quickly.
     return fFulyMixedOnly ? (nValueRet - nTargetValue <= maxTxFee) : true;
 }
+

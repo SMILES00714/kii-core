@@ -63,31 +63,6 @@ public:
 };
 }
 
-namespace CoinJoin {
-//! Interface for the global coinjoin options in src/coinjoin
-class Options
-{
-public:
-    virtual int getRounds() = 0;
-    virtual int getAmount() = 0;
-
-    virtual void setEnabled(bool fEnabled) = 0;
-    virtual void setMultiSessionEnabled(bool fEnabled) = 0;
-    virtual void setRounds(int nRounds) = 0;
-    virtual void setAmount(CAmount amount) = 0;
-
-    virtual bool isMultiSessionEnabled() = 0;
-    virtual bool isEnabled() = 0;
-    // Static helpers
-    virtual bool isCollateralAmount(CAmount nAmount) = 0;
-    virtual CAmount getMinCollateralAmount() = 0;
-    virtual CAmount getMaxCollateralAmount() = 0;
-    virtual CAmount getSmallestDenomination() = 0;
-    virtual bool isDenominated(CAmount nAmount) = 0;
-    virtual std::vector<CAmount> getStandardDenominations() = 0;
-};
-}
-
 //! Top-level interface for a kii node (kiid process).
 class Node
 {
@@ -259,7 +234,7 @@ public:
 
     //! Return interface for accessing masternode related handler.
 #ifdef ENABLE_WALLET
-    virtual CoinJoin::Options& coinJoinOptions() = 0;
+
 #endif
 
     //! Register handler for init messages.
@@ -329,3 +304,4 @@ std::unique_ptr<Node> MakeNode();
 } // namespace interfaces
 
 #endif // BITCOIN_INTERFACES_NODE_H
+

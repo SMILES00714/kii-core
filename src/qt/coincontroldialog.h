@@ -75,7 +75,6 @@ private:
         COLUMN_AMOUNT,
         COLUMN_LABEL,
         COLUMN_ADDRESS,
-        COLUMN_COINJOIN_ROUNDS,
         COLUMN_DATE,
         COLUMN_CONFIRMATIONS,
     };
@@ -115,3 +114,4 @@ private Q_SLOTS:
 };
 
 #endif // BITCOIN_QT_COINCONTROLDIALOG_H
+

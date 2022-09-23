@@ -112,12 +112,6 @@ learn more about node performance and network state in general. We added
 several command line options to give node operators more control, see options
 starting with `-stats` prefix.
 
-PrivateSend rename
-------------------
-PrivateSend has been renamed to CoinJoin to better reflect the functionality
-it provides and align with industry standard terminology. The renaming only
-applies to the UI and RPCs but does not change functionality.
-
 Build system
 ------------
 Multiple packaged in `depends` were updated. Current versions are:
@@ -159,7 +153,7 @@ The new RPCs are:
 - `upgradetohd`
 
 The deprecated RPCs are all related to the deprecation of wallet accounts and
-will be removed in KII v0.18. Note that the deprecation of wallet accounts
+will be removed in KII v1.0.2. Note that the deprecation of wallet accounts
 means that any RPCs that previously accepted an “account” parameter are
 affected — please refer to the RPC help for details about specific RPCs.
 
@@ -179,9 +173,6 @@ The deprecated RPCs are:
 `protx register` and `protx register_fund` RPCs now accept an additional `submit` parameter
 which allows producing and printing ProRegTx-es without relaying them
 to the network.
-
-Also, please note that all mixing-related RPCs have been renamed to replace
-“PrivateSend” with “CoinJoin” (e.g. `setprivatesendrounds` -> `setcoinjoinrounds`).
 
 Please check `help <command>` for more detailed information on specific RPCs.
 
@@ -204,10 +195,6 @@ New cmd-line options:
 - `-zmqpubhashrecoveredsig`
 - `-zmqpubrawrecoveredsig`
 
-Also, please note that all mixing-related command-line options have been
-renamed to replace “PrivateSend” with “CoinJoin” (e.g. `setprivatesendrounds`
--> `setcoinjoinrounds`).
-
 Please check `Help -> Command-line options` in Qt wallet or `kiid --help` for
 more information.
 
@@ -221,4 +208,5 @@ Older releases
 KII Core tree 1.0.0.x was a fork of Dash Core tree 0.17.0.2,
 
 KII Core tree 1.0.1.x was a fork of Dash Core tree 0.17.0.3.
+
 

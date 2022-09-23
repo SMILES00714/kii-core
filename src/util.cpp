@@ -596,8 +596,6 @@ std::string ArgsManager::GetHelpMessage()
                 usage += HelpMessageGroup("HD wallet options:");
             else if (last_cat == OptionsCategory::WALLET)
                 usage += HelpMessageGroup("KeePass options:");
-            else if (last_cat == OptionsCategory::WALLET)
-                usage += HelpMessageGroup("CoinJoin options:");
             else if (last_cat == OptionsCategory::WALLET_DEBUG_TEST && show_debug)
                 usage += HelpMessageGroup("Wallet debugging/testing options:");
             else if (last_cat == OptionsCategory::CHAINPARAMS)
@@ -1182,3 +1180,4 @@ int ScheduleBatchPriority(void)
     return 1;
 #endif
 }
+

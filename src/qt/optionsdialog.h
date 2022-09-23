@@ -62,8 +62,6 @@ private Q_SLOTS:
     /* query the networks, for which the default proxy is used */
     void updateDefaultProxyNets();
 
-    void updateCoinJoinVisibility();
-
     void updateWidth();
 
 Q_SIGNALS:
@@ -77,9 +75,9 @@ private:
     QButtonGroup* pageButtons;
     QString previousTheme;
     AppearanceWidget* appearance;
-    bool fCoinJoinEnabledPrev{false};
 
     void showEvent(QShowEvent* event) override;
 };
 
 #endif // BITCOIN_QT_OPTIONSDIALOG_H
+

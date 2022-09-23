@@ -47,7 +47,6 @@
 #include <validationinterface.h>
 
 #include <masternode/activemasternode.h>
-#include <coinjoin/coinjoin-server.h>
 #include <dsnotificationinterface.h>
 #include <flat-database.h>
 #include <governance/governance.h>
@@ -114,9 +113,7 @@ public:
     void Stop() const override {}
     void Close() const override {}
 
-    // KII Specific WalletInitInterface InitCoinJoinSettings
     void AutoLockMasternodeCollaterals() const override {}
-    void InitCoinJoinSettings() const override {}
     void InitKeePass() const override {}
     bool InitAutoBackup() const override {return true;}
 };
@@ -2221,10 +2218,6 @@ bool AppInitMain()
         activeMasternodeInfo.blsPubKeyOperator = std::make_unique<CBLSPublicKey>();
     }
 
-    // ********************************************************* Step 10b: setup CoinJoin
-
-    g_wallet_init_interface.InitCoinJoinSettings();
-    CCoinJoin::InitStandardDenominations();
 
     // ********************************************************* Step 10b: Load cache data
 
@@ -2292,10 +2285,6 @@ bool AppInitMain()
 
     if (!fDisableGovernance) {
         scheduler.scheduleEvery(std::bind(&CGovernanceManager::DoMaintenance, std::ref(governance), std::ref(*g_connman)), 60 * 5 * 1000);
-    }
-
-    if (fMasternodeMode) {
-        scheduler.scheduleEvery(std::bind(&CCoinJoinServer::DoMaintenance, std::ref(coinJoinServer), std::ref(*g_connman)), 1 * 1000);
     }
 
     if (gArgs.GetBoolArg("-statsenabled", DEFAULT_STATSD_ENABLE)) {
@@ -2454,3 +2443,4 @@ bool AppInitMain()
 
     return true;
 }
+

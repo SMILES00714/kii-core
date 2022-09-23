@@ -52,7 +52,6 @@ public:
     interfaces::Node& node() const { return m_node; }
     interfaces::Masternode::Sync& masternodeSync() const { return m_node.masternodeSync(); }
 #ifdef ENABLE_WALLET
-    interfaces::CoinJoin::Options& coinJoinOptions() const { return m_node.coinJoinOptions(); }
 #endif
     OptionsModel *getOptionsModel();
     PeerTableModel *getPeerTableModel();
@@ -133,3 +132,4 @@ public Q_SLOTS:
 };
 
 #endif // BITCOIN_QT_CLIENTMODEL_H
+

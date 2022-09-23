@@ -179,17 +179,6 @@ bool WalletBatch::WriteAccountingEntry(const uint64_t nAccEntryNum, const CAccou
     return WriteIC(std::make_pair(std::string("acentry"), std::make_pair(acentry.strAccount, nAccEntryNum)), acentry);
 }
 
-bool WalletBatch::ReadCoinJoinSalt(uint256& salt, bool fLegacy)
-{
-    // TODO: Remove legacy checks after few major releases
-    return m_batch.Read(std::string(fLegacy ? "ps_salt" : "cj_salt"), salt);
-}
-
-bool WalletBatch::WriteCoinJoinSalt(const uint256& salt)
-{
-    return WriteIC(std::string("cj_salt"), salt);
-}
-
 bool WalletBatch::WriteGovernanceObject(const CGovernanceObject& obj)
 {
     return WriteIC(std::make_pair(std::string("gobject"), obj.GetHash()), obj, false);
@@ -957,3 +946,4 @@ bool WalletBatch::WriteVersion(int nVersion)
 {
     return m_batch.WriteVersion(nVersion);
 }
+

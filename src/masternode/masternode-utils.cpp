@@ -5,7 +5,6 @@
 #include <masternode/masternode-utils.h>
 
 #ifdef ENABLE_WALLET
-#include <coinjoin/coinjoin-client.h>
 #endif
 #include <init.h>
 #include <masternode/masternode-sync.h>
@@ -15,11 +14,6 @@
 void CMasternodeUtils::ProcessMasternodeConnections(CConnman& connman)
 {
     std::vector<CDeterministicMNCPtr> vecDmns; // will be empty when no wallet
-#ifdef ENABLE_WALLET
-    for (const auto& pair : coinJoinClientManagers) {
-        pair.second->GetMixingMasternodesInfo(vecDmns);
-    }
-#endif // ENABLE_WALLET
 
     // Don't disconnect masternode connections when we have less then the desired amount of outbound nodes
     int nonMasternodeCount = 0;
@@ -74,4 +68,5 @@ void CMasternodeUtils::DoMaintenance(CConnman& connman)
         ProcessMasternodeConnections(connman);
     }
 }
+
 

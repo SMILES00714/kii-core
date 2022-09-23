@@ -1,6 +1,5 @@
 #include <qt/test/wallettests.h>
 
-#include <coinjoin/coinjoin-client.h>
 #include <interfaces/node.h>
 #include <qt/bitcoinamountfield.h>
 #include <qt/callback.h>
@@ -225,3 +224,4 @@ void WalletTests::walletTests()
 {
     TestGUI();
 }
+

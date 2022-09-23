@@ -23,7 +23,6 @@
 #include <wallet/walletdb.h>
 #include <wallet/walletutil.h>
 
-#include <coinjoin/coinjoin.h>
 #include <governance/governance-object.h>
 
 #include <algorithm>
@@ -818,12 +817,6 @@ private:
      *  This salt is needed to prevent an attacker from learning how many extra times
      *  the input was mixed based only on information in the blockchain.
      */
-    uint256 nCoinJoinSalt;
-
-    /**
-     * Fetches CoinJoin salt from database or generates and saves a new one if no salt was found in the db
-     */
-    void InitCoinJoinSalt();
 
 public:
     /*
@@ -919,7 +912,6 @@ public:
     bool SelectCoinsMinConf(const CAmount& nTargetValue, const CoinEligibilityFilter& eligibility_filter, std::vector<COutput> vCoins, std::set<CInputCoin>& setCoinsRet, CAmount& nValueRet, const CoinSelectionParams& coin_selection_params, bool& bnb_used, CoinType nCoinType = CoinType::ALL_COINS) const;
 
     // Coin selection
-    bool SelectTxDSInsByDenomination(int nDenom, CAmount nValueMax, std::vector<CTxDSIn>& vecTxDSInRet);
     bool SelectDenominatedAmounts(CAmount nValueMax, std::set<CAmount>& setAmountsRet) const;
 
     bool SelectCoinsGroupedByAddresses(std::vector<CompactTallyItem>& vecTallyRet, bool fSkipDenominated = true, bool fAnonymizable = true, bool fSkipUnconfirmed = true, int nMaxOupointsPerAddress = -1) const;
@@ -927,10 +919,6 @@ public:
     bool HasCollateralInputs(bool fOnlyConfirmed = true) const;
     int  CountInputsWithAmount(CAmount nInputAmount) const;
 
-    // get the CoinJoin chain depth for a given input
-    int GetRealOutpointCoinJoinRounds(const COutPoint& outpoint, int nRounds = 0) const;
-    // respect current settings
-    int GetCappedOutpointCoinJoinRounds(const COutPoint& outpoint) const;
 
     bool IsDenominated(const COutPoint& outpoint) const;
     bool IsFullyMixed(const COutPoint& outpoint) const;
@@ -1372,3 +1360,4 @@ public:
 int64_t CalculateMaximumSignedTxSize(const CTransaction &tx, const CWallet *wallet);
 int64_t CalculateMaximumSignedTxSize(const CTransaction &tx, const CWallet *wallet, const std::vector<CTxOut>& txouts);
 #endif // BITCOIN_WALLET_WALLET_H
+

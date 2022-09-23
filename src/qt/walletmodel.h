@@ -159,7 +159,7 @@ public:
     SendCoinsReturn prepareTransaction(WalletModelTransaction &transaction, const CCoinControl& coinControl);
 
     // Send coins to a list of recipients
-    SendCoinsReturn sendCoins(WalletModelTransaction &transaction, bool fIsCoinJoin);
+    SendCoinsReturn sendCoins(WalletModelTransaction &transaction);
 
     // Wallet encryption
     bool setWalletEncrypted(bool encrypted, const SecureString &passphrase);
@@ -202,12 +202,10 @@ public:
     int getNumBlocks() const;
     int getNumISLocks() const;
 
-    int getRealOutpointCoinJoinRounds(const COutPoint& outpoint) const;
     bool isFullyMixed(const COutPoint& outpoint) const;
 
     interfaces::Node& node() const { return m_node; }
     interfaces::Wallet& wallet() const { return *m_wallet; }
-    interfaces::CoinJoin::Client& coinJoin() const { return m_wallet->coinJoin(); }
 
     QString getWalletName() const;
 
@@ -240,7 +238,6 @@ private:
     EncryptionStatus cachedEncryptionStatus;
     int cachedNumBlocks;
     int cachedNumISLocks;
-    int cachedCoinJoinRounds;
 
     QTimer *pollTimer;
 
@@ -293,3 +290,4 @@ public Q_SLOTS:
 };
 
 #endif // BITCOIN_QT_WALLETMODEL_H
+

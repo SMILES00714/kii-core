@@ -151,7 +151,6 @@ enum class OptionsCategory
     WALLET_FEE,
     WALLET_HD,
     WALLET_KEEPASS,
-    WALLET_COINJOIN,
     WALLET_DEBUG_TEST,
     ZMQ,
     DEBUG_TEST,
@@ -365,3 +364,4 @@ std::string CopyrightHolders(const std::string& strPrefix, unsigned int nStartYe
 int ScheduleBatchPriority(void);
 
 #endif // BITCOIN_UTIL_H
+

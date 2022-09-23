@@ -15,8 +15,6 @@
 #include <wallet/wallet.h>
 #include <wallet/walletutil.h>
 
-#include <coinjoin/coinjoin-client.h>
-#include <coinjoin/coinjoin-client-options.h>
 
 #include <functional>
 
@@ -54,7 +52,6 @@ public:
 
     // KII Specific Wallet Init
     void AutoLockMasternodeCollaterals() const override;
-    void InitCoinJoinSettings() const override;
     void InitKeePass() const override;
     bool InitAutoBackup() const override;
 };
@@ -253,77 +250,6 @@ bool WalletInit::ParameterInteraction() const
         gArgs.ForceRemoveArg("-mnemonicpassphrase");
     }
 
-    // begin PrivateSend -> CoinJoin migration
-    if (gArgs.IsArgSet("-privatesendrounds")) {
-        int nRoundsDeprecated = gArgs.GetArg("-privatesendrounds", DEFAULT_COINJOIN_ROUNDS);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesendrounds", "-coinjoinrounds"));
-        if (gArgs.SoftSetArg("-coinjoinrounds", itostr(nRoundsDeprecated))) {
-            LogPrintf("%s: parameter interaction: -privatesendrounds=%d -> setting -coinjoinrounds=%d\n", __func__, nRoundsDeprecated, nRoundsDeprecated);
-        }
-        gArgs.ForceRemoveArg("-privatesendrounds");
-    }
-    if (gArgs.IsArgSet("-privatesendamount")) {
-        int nAmountDeprecated = gArgs.GetArg("-privatesendamount", DEFAULT_COINJOIN_AMOUNT);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesendamount", "-coinjoinamount"));
-        if (gArgs.SoftSetArg("-coinjoinamount", itostr(nAmountDeprecated))) {
-            LogPrintf("%s: parameter interaction: -privatesendamount=%d -> setting -coinjoinamount=%d\n", __func__, nAmountDeprecated, nAmountDeprecated);
-        }
-        gArgs.ForceRemoveArg("-privatesendamount");
-    }
-    if (gArgs.IsArgSet("-privatesenddenomsgoal")) {
-        int nDenomsGoalDeprecated = gArgs.GetArg("-privatesenddenomsgoal", DEFAULT_COINJOIN_DENOMS_GOAL);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesenddenomsgoal", "-coinjoindenomsgoal"));
-        if (gArgs.SoftSetArg("-coinjoindenomsgoal", itostr(nDenomsGoalDeprecated))) {
-            LogPrintf("%s: parameter interaction: -privatesenddenomsgoal=%d -> setting -coinjoindenomsgoal=%d\n", __func__, nDenomsGoalDeprecated, nDenomsGoalDeprecated);
-        }
-        gArgs.ForceRemoveArg("-privatesenddenomsgoal");
-    }
-    if (gArgs.IsArgSet("-privatesenddenomshardcap")) {
-        int nDenomsHardcapDeprecated = gArgs.GetArg("-privatesenddenomshardcap", DEFAULT_COINJOIN_DENOMS_HARDCAP);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesenddenomshardcap", "-coinjoindenomshardcap"));
-        if (gArgs.SoftSetArg("-coinjoindenomshardcap", itostr(nDenomsHardcapDeprecated))) {
-            LogPrintf("%s: parameter interaction: -privatesenddenomshardcap=%d -> setting -coinjoindenomshardcap=%d\n", __func__, nDenomsHardcapDeprecated, nDenomsHardcapDeprecated);
-        }
-        gArgs.ForceRemoveArg("-privatesenddenomshardcap");
-    }
-    if (gArgs.IsArgSet("-privatesendsessions")) {
-        int nSessionsDeprecated = gArgs.GetArg("-privatesendsessions", DEFAULT_COINJOIN_SESSIONS);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesendsessions", "-coinjoinsessions"));
-        if (gArgs.SoftSetArg("-coinjoinsessions", itostr(nSessionsDeprecated))) {
-            LogPrintf("%s: parameter interaction: -privatesendsessions=%d -> setting -coinjoinsessions=%d\n", __func__, nSessionsDeprecated, nSessionsDeprecated);
-        }
-        gArgs.ForceRemoveArg("-privatesendsessions");
-    }
-    if (gArgs.IsArgSet("-enableprivatesend")) {
-        bool fEnablePSDeprecated = gArgs.GetBoolArg("-enableprivatesend", 0);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-enableprivatesend", "-enablecoinjoin"));
-        if (gArgs.SoftSetBoolArg("-enablecoinjoin", fEnablePSDeprecated)) {
-            LogPrintf("%s: parameter interaction: -enableprivatesend=%d -> setting -enablecoinjoin=%d\n", __func__, fEnablePSDeprecated, fEnablePSDeprecated);
-        }
-        gArgs.ForceRemoveArg("-enableprivatesend");
-    }
-    if (gArgs.IsArgSet("-privatesendautostart")) {
-        bool fAutoStartDeprecated = gArgs.GetBoolArg("-privatesendautostart", DEFAULT_COINJOIN_AUTOSTART);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesendautostart", "-coinjoinautostart"));
-        if (gArgs.SoftSetBoolArg("-coinjoinautostart", fAutoStartDeprecated)) {
-            LogPrintf("%s: parameter interaction: -privatesendautostart=%d -> setting -coinjoinautostart=%d\n", __func__, fAutoStartDeprecated, fAutoStartDeprecated);
-        }
-        gArgs.ForceRemoveArg("-privatesendautostart");
-    }
-    if (gArgs.IsArgSet("-privatesendmultisession")) {
-        bool fMultiSessionDeprecated = gArgs.GetBoolArg("-privatesendmultisession", DEFAULT_COINJOIN_MULTISESSION);
-        InitWarning(strprintf(_("Warning: %s is deprecated, please use %s instead"), "-privatesendmultisession", "-coinjoinmultisession"));
-        if (gArgs.SoftSetBoolArg("-coinjoinmultisession", fMultiSessionDeprecated)) {
-            LogPrintf("%s: parameter interaction: -privatesendmultisession=%d -> setting -coinjoinmultisession=%d\n", __func__, fMultiSessionDeprecated, fMultiSessionDeprecated);
-        }
-        gArgs.ForceRemoveArg("-privatesendmultisession");
-    }
-    // end PrivateSend -> CoinJoin migration
-
-    if (gArgs.GetArg("-coinjoindenomshardcap", DEFAULT_COINJOIN_DENOMS_HARDCAP) < gArgs.GetArg("-coinjoindenomsgoal", DEFAULT_COINJOIN_DENOMS_GOAL)) {
-        return InitError(strprintf(_("%s can't be lower than %s"), "-coinjoindenomshardcap", "-coinjoindenomsgoal"));
-    }
-
     return true;
 }
 
@@ -411,20 +337,11 @@ void WalletInit::Start(CScheduler& scheduler) const
     // Run a thread to flush wallet periodically
     scheduler.scheduleEvery(MaybeCompactWalletDB, 500);
 
-    if (!fMasternodeMode && CCoinJoinClientOptions::IsEnabled()) {
-        scheduler.scheduleEvery(std::bind(&DoCoinJoinMaintenance, std::ref(*g_connman)), 1 * 1000);
-    }
 }
 
 void WalletInit::Flush() const
 {
     for (const std::shared_ptr<CWallet>& pwallet : GetWallets()) {
-        if (CCoinJoinClientOptions::IsEnabled()) {
-            // Stop CoinJoin, release keys
-            auto it = coinJoinClientManagers.find(pwallet->GetName());
-            it->second->ResetPool();
-            it->second->StopMixing();
-        }
         pwallet->Flush(false);
     }
 }
@@ -451,28 +368,6 @@ void WalletInit::AutoLockMasternodeCollaterals() const
     }
 }
 
-void WalletInit::InitCoinJoinSettings() const
-{
-    CCoinJoinClientOptions::SetEnabled(HasWallets() ? gArgs.GetBoolArg("-enablecoinjoin", true) : false);
-    if (!CCoinJoinClientOptions::IsEnabled()) {
-        return;
-    }
-    bool fAutoStart = gArgs.GetBoolArg("-coinjoinautostart", DEFAULT_COINJOIN_AUTOSTART);
-    for (auto& pwallet : GetWallets()) {
-        if (pwallet->IsLocked()) {
-            coinJoinClientManagers.at(pwallet->GetName())->StopMixing();
-        } else if (fAutoStart) {
-            coinJoinClientManagers.at(pwallet->GetName())->StartMixing();
-        }
-    }
-    LogPrintf("CoinJoin: autostart=%d, multisession=%d," /* Continued */
-              "sessions=%d, rounds=%d, amount=%d, denoms_goal=%d, denoms_hardcap=%d\n",
-              fAutoStart, CCoinJoinClientOptions::IsMultiSessionEnabled(),
-              CCoinJoinClientOptions::GetSessions(), CCoinJoinClientOptions::GetRounds(),
-              CCoinJoinClientOptions::GetAmount(), CCoinJoinClientOptions::GetDenomsGoal(),
-              CCoinJoinClientOptions::GetDenomsHardCap());
-}
-
 void WalletInit::InitKeePass() const
 {
     keePassInt.init();
@@ -482,3 +377,4 @@ bool WalletInit::InitAutoBackup() const
 {
     return CWallet::InitAutoBackup();
 }
+

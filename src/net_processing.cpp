@@ -38,9 +38,7 @@
 #include <masternode/masternode-sync.h>
 #include <masternode/masternode-meta.h>
 #ifdef ENABLE_WALLET
-#include <coinjoin/coinjoin-client.h>
 #endif // ENABLE_WALLET
-#include <coinjoin/coinjoin-server.h>
 
 #include <evo/deterministicmns.h>
 #include <evo/mnauth.h>
@@ -1346,7 +1344,6 @@ bool static AlreadyHave(const CInv& inv) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
             bool fIgnoreRecentRejects = llmq::quorumInstantSendManager->IsLocked(inv.hash) || inv.type == MSG_DSTX;
 
             return (!fIgnoreRecentRejects && recentRejects->contains(inv.hash)) ||
-                   (inv.type == MSG_DSTX && static_cast<bool>(CCoinJoin::GetDSTX(inv.hash))) ||
                    mempool.exists(inv.hash) ||
                    pcoinsTip->HaveCoinInCache(COutPoint(inv.hash, 0)) || // Best effort: only try output 0 and 1
                    pcoinsTip->HaveCoinInCache(COutPoint(inv.hash, 1)) ||
@@ -1602,28 +1599,16 @@ void static ProcessGetData(CNode* pfrom, const CChainParams& chainparams, CConnm
             // Send stream from relay memory
             bool push = false;
             if (inv.type == MSG_TX || inv.type == MSG_DSTX) {
-                CCoinJoinBroadcastTx dstx;
-                if (inv.type == MSG_DSTX) {
-                    dstx = CCoinJoin::GetDSTX(inv.hash);
-                }
                 auto mi = mapRelay.find(inv.hash);
                 if (mi != mapRelay.end()) {
-                    if (dstx) {
-                        connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::DSTX, dstx));
-                    } else {
                         connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::TX, *mi->second));
-                    }
                     push = true;
                 } else if (pfrom->timeLastMempoolReq) {
                     auto txinfo = mempool.info(inv.hash);
                     // To protect privacy, do not answer getdata using the mempool when
                     // that TX couldn't have been INVed in reply to a MEMPOOL request.
                     if (txinfo.tx && txinfo.nTime <= pfrom->timeLastMempoolReq) {
-                        if (dstx) {
-                            connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::DSTX, dstx));
-                        } else {
                             connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::TX, *txinfo.tx));
-                        }
                         push = true;
                     }
                 }
@@ -2373,15 +2358,6 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
             connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::SENDCMPCT, fAnnounceUsingCMPCTBLOCK, nCMPCTBLOCKVersion));
         }
 
-        if (pfrom->nVersion >= SENDDSQUEUE_PROTO_VERSION) {
-            // Tell our peer that he should send us CoinJoin queue messages
-            connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::SENDDSQUEUE, true));
-        } else {
-            // older nodes do not support SENDDSQUEUE and expect us to always send CoinJoin queue messages
-            // TODO we can remove this compatibility code in 0.15.0
-            pfrom->fSendDSQueue = true;
-        }
-
         if (llmq::CLLMQUtils::IsWatchQuorumsEnabled() && !pfrom->m_masternode_connection) {
             connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::QWATCH));
         }
@@ -2476,15 +2452,6 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
             State(pfrom->GetId())->fPreferHeaderAndIDs = fAnnounceUsingCMPCTBLOCK;
             State(pfrom->GetId())->fSupportsDesiredCmpctVersion = true;
         }
-        return true;
-    }
-
-
-    if (strCommand == NetMsgType::SENDDSQUEUE)
-    {
-        bool b;
-        vRecv >> b;
-        pfrom->fSendDSQueue = b;
         return true;
     }
 
@@ -2797,7 +2764,6 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         }
 
         CTransactionRef ptx;
-        CCoinJoinBroadcastTx dstx;
         int nInvType = MSG_TX;
 
         // Read data and assign inv type
@@ -2806,11 +2772,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         } else if(strCommand == NetMsgType::LEGACYTXLOCKREQUEST) {
             // we keep processing the legacy IX message here but revert to handling it as a regular TX
             vRecv >> ptx;
-        } else if (strCommand == NetMsgType::DSTX) {
-            vRecv >> dstx;
-            ptx = dstx.tx;
-            nInvType = MSG_DSTX;
-        }
+        } 
         const CTransaction& tx = *ptx;
 
         CInv inv(nInvType, tx.GetHash());
@@ -2822,51 +2784,6 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         }
 
         // Process custom logic, no matter if tx will be accepted to mempool later or not
-        if (nInvType == MSG_DSTX) {
-            uint256 hashTx = tx.GetHash();
-            if (!dstx.IsValidStructure()) {
-                LogPrint(BCLog::COINJOIN, "DSTX -- Invalid DSTX structure: %s\n", hashTx.ToString());
-                return false;
-            }
-            if(CCoinJoin::GetDSTX(hashTx)) {
-                LogPrint(BCLog::COINJOIN, "DSTX -- Already have %s, skipping...\n", hashTx.ToString());
-                return true; // not an error
-            }
-
-            const CBlockIndex* pindex{nullptr};
-            CDeterministicMNCPtr dmn{nullptr};
-            {
-                LOCK(cs_main);
-                pindex = chainActive.Tip();
-            }
-            // It could be that a MN is no longer in the list but its DSTX is not yet mined.
-            // Try to find a MN up to 24 blocks deep to make sure such dstx-es are relayed and processed correctly.
-            for (int i = 0; i < 24 && pindex; ++i) {
-                dmn = deterministicMNManager->GetListForBlock(pindex).GetMNByCollateral(dstx.masternodeOutpoint);
-                if (dmn) break;
-                pindex = pindex->pprev;
-            }
-            if(!dmn) {
-                LogPrint(BCLog::COINJOIN, "DSTX -- Can't find masternode %s to verify %s\n", dstx.masternodeOutpoint.ToStringShort(), hashTx.ToString());
-                return false;
-            }
-
-            if (!mmetaman.GetMetaInfo(dmn->proTxHash)->IsValidForMixingTxes()) {
-                LogPrint(BCLog::COINJOIN, "DSTX -- Masternode %s is sending too many transactions %s\n", dstx.masternodeOutpoint.ToStringShort(), hashTx.ToString());
-                return true;
-                // TODO: Not an error? Could it be that someone is relaying old DSTXes
-                // we have no idea about (e.g we were offline)? How to handle them?
-            }
-
-            if (!dstx.CheckSignature(dmn->pdmnState->pubKeyOperator.Get())) {
-                LogPrint(BCLog::COINJOIN, "DSTX -- CheckSignature() failed for %s\n", hashTx.ToString());
-                return false;
-            }
-
-            LogPrint(BCLog::COINJOIN, "DSTX -- Got Masternode transaction %s\n", hashTx.ToString());
-            mempool.PrioritiseTransaction(hashTx, 0.1*COIN);
-            mmetaman.DisallowMixing(dmn->proTxHash);
-        }
 
         LOCK2(cs_main, g_cs_orphans);
 
@@ -2876,11 +2793,6 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         if (!AlreadyHave(inv) && AcceptToMemoryPool(mempool, state, ptx, &fMissingInputs /* pfMissingInputs */,
                 false /* bypass_limits */, 0 /* nAbsurdFee */)) {
             // Process custom txes, this changes AlreadyHave to "true"
-            if (nInvType == MSG_DSTX) {
-                LogPrint(BCLog::COINJOIN, "DSTX -- Masternode transaction accepted, txid=%s, peer=%d\n",
-                         tx.GetHash().ToString(), pfrom->GetId());
-                CCoinJoin::AddDSTX(dstx);
-            }
 
             mempool.check(pcoinsTip.get());
             connman->RelayTransaction(tx);
@@ -3568,13 +3480,6 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
     if (found)
     {
         //probably one the extensions
-#ifdef ENABLE_WALLET
-        coinJoinClientQueueManager.ProcessMessage(pfrom, strCommand, vRecv, *connman, enable_bip61);
-        for (auto& pair : coinJoinClientManagers) {
-            pair.second->ProcessMessage(pfrom, strCommand, vRecv, *connman, enable_bip61);
-        }
-#endif // ENABLE_WALLET
-        coinJoinServer.ProcessMessage(pfrom, strCommand, vRecv, *connman, enable_bip61);
         sporkManager.ProcessSpork(pfrom, strCommand, vRecv, *connman);
         masternodeSync.ProcessMessage(pfrom, strCommand, vRecv);
         governance.ProcessMessage(pfrom, strCommand, vRecv, *connman, enable_bip61);
@@ -4235,8 +4140,6 @@ bool PeerLogicValidation::SendMessages(CNode* pto)
                     pto->setInventoryTxToSend.erase(hash);
                     if (pto->pfilter && !pto->pfilter->IsRelevantAndUpdate(*txinfo.tx)) continue;
 
-                    int nInvType = CCoinJoin::GetDSTX(hash) ? MSG_DSTX : MSG_TX;
-                    queueAndMaybePushInv(CInv(nInvType, hash));
 
                     uint256 islockHash;
                     if (!llmq::quorumInstantSendManager->GetInstantSendLockHashByTxid(hash, islockHash)) continue;
@@ -4302,8 +4205,6 @@ bool PeerLogicValidation::SendMessages(CNode* pto)
                             vRelayExpiration.push_back(std::make_pair(nNow + 15 * 60 * 1000000, ret.first));
                         }
                     }
-                    int nInvType = CCoinJoin::GetDSTX(hash) ? MSG_DSTX : MSG_TX;
-                    queueAndMaybePushInv(CInv(nInvType, hash));
                 }
             }
 
@@ -4493,3 +4394,4 @@ public:
         nMapOrphanTransactionsSize = 0;
     }
 } instance_of_cnetprocessingcleanup;
+
