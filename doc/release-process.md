@@ -38,15 +38,15 @@ Check out the source code in the following directory hierarchy.
 
 Write release notes. git shortlog helps a lot, for example:
 
-    git shortlog --no-merges v(current version, e.g. 0.12.2)..v(new version, e.g. 0.12.3)
+    git shortlog --no-merges v(current version, e.g. 1.0.1.2)..v(new version, e.g. 1.0.1.3)
 
 Generate list of authors:
 
-    git log --format='- %aN' v(current version, e.g. 0.16.0)..v(new version, e.g. 0.16.1) | sort -fiu
+    git log --format='- %aN' v(current version, e.g. 1.0.1.2)..v(new version, e.g. 1.0.1.3) | sort -fiu
 
 Tag version (or release candidate) in git
 
-    git tag -s v(new version, e.g. 0.12.3)
+    git tag -s v(new version, e.g. 1.0.1.2)
 
 ### Setup and perform Gitian builds
 
