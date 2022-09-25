@@ -263,14 +263,8 @@ Note: check that SHA256SUMS itself doesn't end up in SHA256SUMS, which is a spur
 
 - Announce the release:
 
-  - Release on KII forum: https://www.kii.org/forum/topic/official-announcements.54/
+- Release on KII forum: https://www.kii.global
 
-  - Optionally Discord, twitter, reddit /r/KIIpay, ... but this will usually sort out itself
-
-  - Notify flare so that he can start building [the PPAs](https://launchpad.net/~kii.org/+archive/ubuntu/kii)
-
-  - Archive release notes for the new version to `doc/release-notes/` (branch `master` and branch of the release)
-
-  - Create a [new GitHub release](https://github.com/kiipay/kii/releases/new) with a link to the archived release notes.
+- Optionally Discord, twitter, reddit /r/KII, ... but this will usually sort out itself
 
   - Celebrate
