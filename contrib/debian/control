@@ -1,8 +1,8 @@
 Source: kii
 Section: utils
 Priority: optional
-Maintainer: Holger Schinzel <holger@kii.org>
-Uploaders: Holger Schinzel <holger@kii.org>
+Maintainer: Holger Schinzel <holger@kii.global>
+Uploaders: Holger Schinzel <holger@kii.global>
 Build-Depends: debhelper,
  devscripts,
  automake,
@@ -26,7 +26,7 @@ Build-Depends: debhelper,
  python,
  libzmq3-dev
 Standards-Version: 3.9.2
-Homepage: https://www.kii.org/
+Homepage: https://www.kii.global/
 Vcs-Git: git://github.com/kiiglobal/kii-core.git
 Vcs-Browser: https://github.com/kiiglobal/kii-core
 

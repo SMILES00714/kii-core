@@ -1,5 +1,5 @@
 FROM phusion/baseimage:bionic-1.0.1
-LABEL maintainer="KII Developers <dev@kii.org>"
+LABEL maintainer="KII Developers <dev@kii.global>"
 LABEL description="Dockerised KII, built from Travis"
 
 ARG USER_ID
