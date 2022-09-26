@@ -54,7 +54,6 @@ QPushButton - Special case, tabbar replacement buttons
 /* Options dialog buttons */
 #btnMain,
 #btnWallet,
-#btnCoinJoin,
 #btnNetwork,
 #btnDisplay,
 #btnAppearance,
@@ -78,7 +77,6 @@ QPushButton - Special case, tabbar replacement buttons
 /* Options dialog buttons */
 #btnMain:hover:checked,
 #btnWallet:hover:checked,
-#btnCoinJoin:hover:checked,
 #btnNetwork:hover:checked,
 #btnDisplay:hover:checked,
 #btnAppearance:hover:checked,
@@ -101,7 +99,6 @@ QPushButton - Special case, tabbar replacement buttons
 /* Options dialog buttons */
 #btnMain:hover:!checked,
 #btnWallet:hover:!checked,
-#btnCoinJoin:hover:!checked,
 #btnNetwork:hover:!checked,
 #btnDisplay:hover:!checked,
 #btnAppearance:hover:!checked,
@@ -124,7 +121,6 @@ QPushButton - Special case, tabbar replacement buttons
 /* Options dialog buttons */
 #btnMain:checked,
 #btnWallet:checked,
-#btnCoinJoin:checked,
 #btnNetwork:checked,
 #btnDisplay:checked,
 #btnAppearance:checked,
@@ -239,7 +235,6 @@ QWidget#OverviewPage QLabel#labelAlerts {
  }
 
 QWidget .QFrame#frame .QLabel#labelWalletStatus, /* Wallet Sync Status */
-QWidget .QFrame#frameCoinJoin .QLabel#labelCoinJoinSyncStatus, /* CoinJoin Sync Status */
 QWidget .QFrame#frame_2 .QLabel#labelTransactionsStatus { /* Recent Transactions Sync Status */
     color: #a84832;
 }
@@ -262,3 +257,4 @@ QDialog#SendCoinsDialog QLabel#labelBalance {
 QDialog#SendCoinsDialog .QFrame#frameCoinControl .QLabel#labelCoinControlInsuffFunds { /* Insufficient Funds Label */
     color: #a84832;
 }
+

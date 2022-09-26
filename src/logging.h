@@ -72,9 +72,8 @@ namespace BCLog {
         LLMQ_SIGS   = ((uint64_t)1 << 38),
         MNPAYMENTS  = ((uint64_t)1 << 39),
         MNSYNC      = ((uint64_t)1 << 40),
-        COINJOIN    = ((uint64_t)1 << 41),
-        SPORK       = ((uint64_t)1 << 42),
-        NETCONN     = ((uint64_t)1 << 43),
+        SPORK       = ((uint64_t)1 << 41),
+        NETCONN     = ((uint64_t)1 << 42),
         //End KII
 
         NET_NETCONN = NET | NETCONN, // use this to have something logged in NET and NETCONN as well
@@ -159,3 +158,4 @@ bool OpenDebugLog();
 void ShrinkDebugFile();
 
 #endif // BITCOIN_LOGGING_H
+

@@ -13,7 +13,7 @@ RPCs tested are:
     - move (with account arguments)
 
 Run the test twice - once using the accounts API and once using the labels API.
-The accounts API test can be removed in V0.18.
+The accounts API test can be removed in v1.0.2.
 """
 from collections import defaultdict
 

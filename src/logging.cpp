@@ -137,7 +137,6 @@ const CLogCategoryDesc LogCategories[] =
     {BCLog::LLMQ_SIGS, "llmq-sigs"},
     {BCLog::MNPAYMENTS, "mnpayments"},
     {BCLog::MNSYNC, "mnsync"},
-    {BCLog::COINJOIN, "coinjoin"},
     {BCLog::SPORK, "spork"},
     {BCLog::NETCONN, "netconn"},
     //End KII
@@ -160,7 +159,6 @@ bool GetLogCategory(uint64_t *f, const std::string *str)
                  | BCLog::LLMQ_SIGS
                  | BCLog::MNPAYMENTS
                  | BCLog::MNSYNC
-                 | BCLog::COINJOIN
                  | BCLog::SPORK;
             return true;
         }
@@ -349,3 +347,4 @@ void ShrinkDebugFile()
     else if (file != nullptr)
         fclose(file);
 }
+

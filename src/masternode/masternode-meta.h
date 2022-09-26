@@ -95,7 +95,6 @@ private:
     std::map<uint256, CMasternodeMetaInfoPtr> metaInfos;
     std::vector<uint256> vecDirtyGovernanceObjectHashes;
 
-    // keep track of dsq count to prevent masternodes from gaming coinjoin queue
     int64_t nDsqCount = 0;
 
 public:
@@ -159,3 +158,4 @@ public:
 extern CMasternodeMetaMan mmetaman;
 
 #endif // BITCOIN_MASTERNODE_MASTERNODE_META_H
+

@@ -7,7 +7,7 @@ architectures:
 packages:
 - "faketime"
 remotes:
-- "url": "https://github.com/kiipay/kii-detached-sigs.git"
+- "url": "https://github.com/kiiglobal/kii-detached-sigs.git"
   "dir": "signature"
 files:
 - "kii-osx-unsigned.tar.gz"

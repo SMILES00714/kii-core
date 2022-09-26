@@ -5,7 +5,7 @@ export LC_ALL=C
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR/.. || exit
 
-DOCKER_IMAGE=${DOCKER_IMAGE:-kiipay/kiid-develop}
+DOCKER_IMAGE=${DOCKER_IMAGE:-kiiglobal/kiid-develop}
 DOCKER_TAG=${DOCKER_TAG:-latest}
 
 if [ -n "$DOCKER_REPO" ]; then

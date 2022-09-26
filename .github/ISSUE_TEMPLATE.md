@@ -2,9 +2,9 @@
 
 This issue tracker is only for technical issues related to KII Core.
 
-General KII questions and/or support requests and are best directed to the [KIIpay Reddit](https://www.reddit.com/r/kiipay/).
+General KII questions and/or support requests and are best directed to the [KII Reddit](https://www.reddit.com/r/Kii_coin/).
 
-To report critical security issues, email infosec@kii.org and/or see the KII bug bounty program on [Bugcrowd](https://bugcrowd.com/kiidigitalcash) instead of creating Github issues.
+To report critical security issues, email info@kii.global
 
 ### Describe the issue
 

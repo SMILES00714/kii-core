@@ -109,14 +109,12 @@ private:
     QToolBar *appToolBar;
     QToolButton *overviewButton;
     QToolButton *sendCoinsButton;
-    QToolButton *coinJoinCoinsButton;
     QToolButton *receiveCoinsButton;
     QToolButton *historyButton;
     QToolButton *masternodeButton;
     QAction* appToolBarLogoAction;
     QAction *quitAction;
     QAction *sendCoinsMenuAction;
-    QAction *coinJoinCoinsMenuAction;
     QAction *usedSendingAddressesAction;
     QAction *usedReceivingAddressesAction;
     QAction *signMessageAction;
@@ -140,7 +138,6 @@ private:
     QAction *showBackupsAction;
     QAction *openAction;
     QAction *showHelpMessageAction;
-    QAction *showCoinJoinHelpAction;
     QAction *m_wallet_selector_action = nullptr;
 
     QComboBox *m_wallet_selector;
@@ -280,8 +277,6 @@ private Q_SLOTS:
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
-    /** Switch to CoinJoin coins page */
-    void gotoCoinJoinCoinsPage(QString addr = "");
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
@@ -315,8 +310,7 @@ private Q_SLOTS:
 
     /** Show help message dialog */
     void showHelpMessageClicked();
-    /** Show CoinJoin help message dialog */
-    void showCoinJoinHelpClicked();
+
 #ifndef Q_OS_MAC
     /** Handle tray icon clicked */
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -343,8 +337,6 @@ private Q_SLOTS:
     void toggleNetworkActive();
 
     void showModalOverlay();
-
-    void updateCoinJoinVisibility();
 
     void updateWidth();
 };
@@ -379,3 +371,4 @@ private Q_SLOTS:
 };
 
 #endif // BITCOIN_QT_BITCOINGUI_H
+

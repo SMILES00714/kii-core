@@ -475,7 +475,6 @@ QPushButton - Special case, tabbar replacement buttons
 /* Options dialog buttons */
 #btnMain,
 #btnWallet,
-#btnCoinJoin,
 #btnNetwork,
 #btnDisplay,
 #btnAppearance,
@@ -495,7 +494,6 @@ QPushButton - Special case, tabbar replacement buttons
 /* Options dialog buttons */
 #btnMain:hover:checked,
 #btnWallet:hover:checked,
-#btnCoinJoin:hover:checked,
 #btnNetwork:hover:checked,
 #btnDisplay:hover:checked,
 #btnAppearance:hover:checked,
@@ -515,7 +513,6 @@ QPushButton - Special case, tabbar replacement buttons
 /* Options dialog buttons */
 #btnMain:hover:!checked,
 #btnWallet:hover:!checked,
-#btnCoinJoin:hover:!checked,
 #btnNetwork:hover:!checked,
 #btnDisplay:hover:!checked,
 #btnAppearance:hover:!checked,
@@ -535,7 +532,6 @@ QPushButton - Special case, tabbar replacement buttons
 /* Options dialog buttons */
 #btnMain:checked,
 #btnWallet:checked,
-#btnCoinJoin:checked,
 #btnNetwork:checked,
 #btnDisplay:checked,
 #btnAppearance:checked,
@@ -868,10 +864,6 @@ OverviewPage Balances
 
 /***** No dark.css specific coloring here yet *****/
 
-/******************************************************
-OverviewPage CoinJoin
-******************************************************/
-
 /***** No dark.css specific coloring here yet *****/
 
 /******************************************************
@@ -1069,3 +1061,4 @@ QScrollBar:right-arrow:disabled {
 }
 
 </os>
+

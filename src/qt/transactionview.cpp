@@ -245,7 +245,6 @@ void TransactionView::setModel(WalletModel *_model)
                 }
             }
 
-            connect(_model->getOptionsModel(), SIGNAL(coinJoinEnabledChanged()), this, SLOT(updateCoinJoinVisibility()));
         }
 
         // show/hide column Watch-only
@@ -258,7 +257,6 @@ void TransactionView::setModel(WalletModel *_model)
         chooseType(settings.value("transactionType").toInt());
         chooseDate(settings.value("transactionDate").toInt());
 
-        updateCoinJoinVisibility();
     }
 }
 
@@ -726,18 +724,4 @@ void TransactionView::updateWatchOnlyColumn(bool fHaveWatchOnly)
     transactionView->setColumnHidden(TransactionTableModel::Watchonly, !fHaveWatchOnly);
 }
 
-void TransactionView::updateCoinJoinVisibility()
-{
-    if (model == nullptr) {
-        return;
-    }
-    bool fEnabled = model->node().coinJoinOptions().isEnabled();
-    // If CoinJoin gets enabled use "All" else "Most common"
-    typeWidget->setCurrentIndex(fEnabled ? 0 : 1);
-    // Hide all CoinJoin related filters
-    QListView* typeList = qobject_cast<QListView*>(typeWidget->view());
-    std::vector<int> vecRows{4, 5, 6, 7, 8};
-    for (auto nRow : vecRows) {
-        typeList->setRowHidden(nRow, !fEnabled);
-    }
-}
+

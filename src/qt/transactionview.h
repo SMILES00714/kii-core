@@ -102,7 +102,6 @@ private Q_SLOTS:
     void copyTxPlainText();
     void openThirdPartyTxUrl(QString url);
     void updateWatchOnlyColumn(bool fHaveWatchOnly);
-    void updateCoinJoinVisibility();
     void abandonTx();
 
 Q_SIGNALS:
@@ -127,3 +126,4 @@ public Q_SLOTS:
 };
 
 #endif // BITCOIN_QT_TRANSACTIONVIEW_H
+

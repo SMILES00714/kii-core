@@ -1,5 +1,5 @@
 FROM ubuntu:bionic
-LABEL maintainer="KII Developers <dev@kii.org>"
+LABEL maintainer="KII Developers <dev@kii.global>"
 LABEL description="Dockerised KII"
 
 ARG USER_ID

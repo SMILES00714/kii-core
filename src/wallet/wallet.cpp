@@ -29,8 +29,6 @@
 #include <utilmoneystr.h>
 #include <wallet/fees.h>
 
-#include <coinjoin/coinjoin-client.h>
-#include <coinjoin/coinjoin-client-options.h>
 #include <governance/governance.h>
 #include <keepass.h>
 
@@ -53,7 +51,6 @@ bool AddWallet(const std::shared_ptr<CWallet>& wallet)
     assert(wallet);
     std::vector<std::shared_ptr<CWallet>>::const_iterator i = std::find(vpwallets.begin(), vpwallets.end(), wallet);
     if (i != vpwallets.end()) return false;
-    coinJoinClientManagers.emplace(std::make_pair(wallet->GetName(), std::make_shared<CCoinJoinClientManager>(*wallet)));
     vpwallets.push_back(wallet);
     return true;
 }
@@ -65,8 +62,6 @@ bool RemoveWallet(const std::shared_ptr<CWallet>& wallet)
     std::vector<std::shared_ptr<CWallet>>::iterator i = std::find(vpwallets.begin(), vpwallets.end(), wallet);
     if (i == vpwallets.end()) return false;
     vpwallets.erase(i);
-    auto it = coinJoinClientManagers.find(wallet->GetName());
-    coinJoinClientManagers.erase(it);
     return true;
 }
 
@@ -165,10 +160,6 @@ public:
 
 int COutput::Priority() const
 {
-    for (const auto& d : CCoinJoin::GetStandardDenominations()) {
-        // large denoms have lower value
-        if(tx->tx->vout[i].nValue == d) return (float)COIN / d * 10000;
-    }
     if(tx->tx->vout[i].nValue < 1*COIN) return 20000;
 
     //nondenom return largest first
@@ -1613,94 +1604,7 @@ CAmount CWallet::GetDebit(const CTxIn &txin, const isminefilter& filter) const
     return 0;
 }
 
-// Recursively determine the rounds of a given input (How deep is the CoinJoin chain for a given input)
-int CWallet::GetRealOutpointCoinJoinRounds(const COutPoint& outpoint, int nRounds) const
-{
-    LOCK(cs_wallet);
-
-    const int nRoundsMax = MAX_COINJOIN_ROUNDS + CCoinJoinClientOptions::GetRandomRounds();
-
-    if (nRounds >= nRoundsMax) {
-        // there can only be nRoundsMax rounds max
-        return nRoundsMax - 1;
-    }
-
-    auto pair = mapOutpointRoundsCache.emplace(outpoint, -10);
-    auto nRoundsRef = &pair.first->second;
-    if (!pair.second) {
-        // we already processed it, just return what we have
-        return *nRoundsRef;
-    }
-
-    // TODO wtx should refer to a CWalletTx object, not a pointer, based on surrounding code
-    const CWalletTx* wtx = GetWalletTx(outpoint.hash);
-
-    if (wtx == nullptr || wtx->tx == nullptr) {
-        // no such tx in this wallet
-        *nRoundsRef = -1;
-        LogPrint(BCLog::COINJOIN, "%s FAILED    %-70s %3d\n", __func__, outpoint.ToStringShort(), -1);
-        return *nRoundsRef;
-    }
-
-    // bounds check
-    if (outpoint.n >= wtx->tx->vout.size()) {
-        // should never actually hit this
-        *nRoundsRef = -4;
-        LogPrint(BCLog::COINJOIN, "%s FAILED    %-70s %3d\n", __func__, outpoint.ToStringShort(), -4);
-        return *nRoundsRef;
-    }
-
-    auto txOutRef = &wtx->tx->vout[outpoint.n];
-
-    if (CCoinJoin::IsCollateralAmount(txOutRef->nValue)) {
-        *nRoundsRef = -3;
-        LogPrint(BCLog::COINJOIN, "%s UPDATED   %-70s %3d\n", __func__, outpoint.ToStringShort(), *nRoundsRef);
-        return *nRoundsRef;
-    }
-
-    // make sure the final output is non-denominate
-    if (!CCoinJoin::IsDenominatedAmount(txOutRef->nValue)) { //NOT DENOM
-        *nRoundsRef = -2;
-        LogPrint(BCLog::COINJOIN, "%s UPDATED   %-70s %3d\n", __func__, outpoint.ToStringShort(), *nRoundsRef);
-        return *nRoundsRef;
-    }
-
-    for (const auto& out : wtx->tx->vout) {
-        if (!CCoinJoin::IsDenominatedAmount(out.nValue)) {
-            // this one is denominated but there is another non-denominated output found in the same tx
-            *nRoundsRef = 0;
-            LogPrint(BCLog::COINJOIN, "%s UPDATED   %-70s %3d\n", __func__, outpoint.ToStringShort(), *nRoundsRef);
-            return *nRoundsRef;
-        }
-    }
-
-    int nShortest = -10; // an initial value, should be no way to get this by calculations
-    bool fDenomFound = false;
-    // only denoms here so let's look up
-    for (const auto& txinNext : wtx->tx->vin) {
-        if (IsMine(txinNext)) {
-            int n = GetRealOutpointCoinJoinRounds(txinNext.prevout, nRounds + 1);
-            // denom found, find the shortest chain or initially assign nShortest with the first found value
-            if(n >= 0 && (n < nShortest || nShortest == -10)) {
-                nShortest = n;
-                fDenomFound = true;
-            }
-        }
-    }
-    *nRoundsRef = fDenomFound
-            ? (nShortest >= nRoundsMax - 1 ? nRoundsMax : nShortest + 1) // good, we a +1 to the shortest one but only nRoundsMax rounds max allowed
-            : 0;            // too bad, we are the fist one in that chain
-    LogPrint(BCLog::COINJOIN, "%s UPDATED   %-70s %3d\n", __func__, outpoint.ToStringShort(), *nRoundsRef);
-    return *nRoundsRef;
-}
-
 // respect current settings
-int CWallet::GetCappedOutpointCoinJoinRounds(const COutPoint& outpoint) const
-{
-    LOCK(cs_wallet);
-    int realCoinJoinRounds = GetRealOutpointCoinJoinRounds(outpoint);
-    return realCoinJoinRounds > CCoinJoinClientOptions::GetRounds() ? CCoinJoinClientOptions::GetRounds() : realCoinJoinRounds;
-}
 
 bool CWallet::IsDenominated(const COutPoint& outpoint) const
 {
@@ -1715,29 +1619,11 @@ bool CWallet::IsDenominated(const COutPoint& outpoint) const
         return false;
     }
 
-    return CCoinJoin::IsDenominatedAmount(it->second.tx->vout[outpoint.n].nValue);
+    return true;
 }
 
 bool CWallet::IsFullyMixed(const COutPoint& outpoint) const
 {
-    int nRounds = GetRealOutpointCoinJoinRounds(outpoint);
-    // Mix again if we don't have N rounds yet
-    if (nRounds < CCoinJoinClientOptions::GetRounds()) return false;
-
-    // Try to mix a "random" number of rounds more than minimum.
-    // If we have already mixed N + MaxOffset rounds, don't mix again.
-    // Otherwise, we should mix again 50% of the time, this results in an exponential decay
-    // N rounds 50% N+1 25% N+2 12.5%... until we reach N + GetRandomRounds() rounds where we stop.
-    if (nRounds < CCoinJoinClientOptions::GetRounds() + CCoinJoinClientOptions::GetRandomRounds()) {
-        CDataStream ss(SER_GETHASH, PROTOCOL_VERSION);
-        ss << outpoint << nCoinJoinSalt;
-        uint256 nHash;
-        CSHA256().Write((const unsigned char*)ss.data(), ss.size()).Finalize(nHash.begin());
-        if (nHash.GetCheapHash() % 2 == 0) {
-            return false;
-        }
-    }
-
     return true;
 }
 
@@ -2494,7 +2380,7 @@ CAmount CWalletTx::GetAnonymizedCredit(const CCoinControl* coinControl) const
             continue;
         }
 
-        if (pwallet->IsSpent(hashTx, i) || !CCoinJoin::IsDenominatedAmount(txout.nValue)) continue;
+        if (pwallet->IsSpent(hashTx, i)) continue;
 
         if (pwallet->IsFullyMixed(outpoint)) {
             nCredit += pwallet->GetCredit(txout, ISMINE_SPENDABLE);
@@ -2539,7 +2425,7 @@ CAmount CWalletTx::GetDenominatedCredit(bool unconfirmed, bool fUseCache) const
     {
         const CTxOut &txout = tx->vout[i];
 
-        if (pwallet->IsSpent(hashTx, i) || !CCoinJoin::IsDenominatedAmount(txout.nValue)) continue;
+        if (pwallet->IsSpent(hashTx, i)) continue;
 
         nCredit += pwallet->GetCredit(txout, ISMINE_SPENDABLE);
         if (!MoneyRange(nCredit))
@@ -2707,92 +2593,8 @@ CAmount CWallet::GetBalance(const isminefilter& filter, const int min_depth, con
     return nTotal;
 }
 
-CAmount CWallet::GetAnonymizableBalance(bool fSkipDenominated, bool fSkipUnconfirmed) const
-{
-    if (!CCoinJoinClientOptions::IsEnabled()) return 0;
-
-    std::vector<CompactTallyItem> vecTally;
-    if(!SelectCoinsGroupedByAddresses(vecTally, fSkipDenominated, true, fSkipUnconfirmed)) return 0;
-
-    CAmount nTotal = 0;
-
-    const CAmount nSmallestDenom = CCoinJoin::GetSmallestDenomination();
-    const CAmount nMixingCollateral = CCoinJoin::GetCollateralAmount();
-    for (const auto& item : vecTally) {
-        bool fIsDenominated = CCoinJoin::IsDenominatedAmount(item.nAmount);
-        if(fSkipDenominated && fIsDenominated) continue;
-        // assume that the fee to create denoms should be mixing collateral at max
-        if(item.nAmount >= nSmallestDenom + (fIsDenominated ? 0 : nMixingCollateral))
-            nTotal += item.nAmount;
-    }
-
-    return nTotal;
-}
-
-CAmount CWallet::GetAnonymizedBalance(const CCoinControl* coinControl) const
-{
-    if (!CCoinJoinClientOptions::IsEnabled()) return 0;
-
-    CAmount nTotal = 0;
-
-    LOCK2(cs_main, cs_wallet);
-
-    for (auto pcoin : GetSpendableTXs()) {
-        nTotal += pcoin->GetAnonymizedCredit(coinControl);
-    }
-
-    return nTotal;
-}
-
-// Note: calculated including unconfirmed,
-// that's ok as long as we use it for informational purposes only
-float CWallet::GetAverageAnonymizedRounds() const
-{
-    if (!CCoinJoinClientOptions::IsEnabled()) return 0;
-
-    int nTotal = 0;
-    int nCount = 0;
-
-    LOCK2(cs_main, cs_wallet);
-    for (const auto& outpoint : setWalletUTXO) {
-        if(!IsDenominated(outpoint)) continue;
-
-        nTotal += GetCappedOutpointCoinJoinRounds(outpoint);
-        nCount++;
-    }
-
-    if(nCount == 0) return 0;
-
-    return (float)nTotal/nCount;
-}
-
-// Note: calculated including unconfirmed,
-// that's ok as long as we use it for informational purposes only
-CAmount CWallet::GetNormalizedAnonymizedBalance() const
-{
-    if (!CCoinJoinClientOptions::IsEnabled()) return 0;
-
-    CAmount nTotal = 0;
-
-    LOCK2(cs_main, cs_wallet);
-    for (const auto& outpoint : setWalletUTXO) {
-        const auto it = mapWallet.find(outpoint.hash);
-        if (it == mapWallet.end()) continue;
-
-        CAmount nValue = it->second.tx->vout[outpoint.n].nValue;
-        if (!CCoinJoin::IsDenominatedAmount(nValue)) continue;
-        if (it->second.GetDepthInMainChain() < 0) continue;
-
-        int nRounds = GetCappedOutpointCoinJoinRounds(outpoint);
-        nTotal += nValue * nRounds / CCoinJoinClientOptions::GetRounds();
-    }
-
-    return nTotal;
-}
-
 CAmount CWallet::GetDenominatedBalance(bool unconfirmed) const
 {
-    if (!CCoinJoinClientOptions::IsEnabled()) return 0;
 
     CAmount nTotal = 0;
 
@@ -2949,24 +2751,6 @@ void CWallet::AvailableCoins(std::vector<COutput> &vCoins, bool fOnlySafe, const
             continue;
 
         for (unsigned int i = 0; i < pcoin->tx->vout.size(); i++) {
-            bool found = false;
-            if (nCoinType == CoinType::ONLY_FULLY_MIXED) {
-                if (!CCoinJoin::IsDenominatedAmount(pcoin->tx->vout[i].nValue)) continue;
-                found = IsFullyMixed(COutPoint(wtxid, i));
-            } else if(nCoinType == CoinType::ONLY_READY_TO_MIX) {
-                if (!CCoinJoin::IsDenominatedAmount(pcoin->tx->vout[i].nValue)) continue;
-                found = !IsFullyMixed(COutPoint(wtxid, i));
-            } else if(nCoinType == CoinType::ONLY_NONDENOMINATED) {
-                if (CCoinJoin::IsCollateralAmount(pcoin->tx->vout[i].nValue)) continue; // do not use collateral amounts
-                found = !CCoinJoin::IsDenominatedAmount(pcoin->tx->vout[i].nValue);
-            } else if(nCoinType == CoinType::ONLY_MASTERNODE_COLLATERAL) {
-                found = pcoin->tx->vout[i].nValue == 150000*COIN;
-            } else if(nCoinType == CoinType::ONLY_COINJOIN_COLLATERAL) {
-                found = CCoinJoin::IsCollateralAmount(pcoin->tx->vout[i].nValue);
-            } else {
-                found = true;
-            }
-            if(!found) continue;
 
             if (pcoin->tx->vout[i].nValue < nMinimumAmount || pcoin->tx->vout[i].nValue > nMaximumAmount)
                 continue;
@@ -3069,23 +2853,6 @@ const CTxOut& CWallet::FindNonChangeParentOutput(const CTransaction& tx, int out
         n = prevout.n;
     }
     return ptx->vout[n];
-}
-
-void CWallet::InitCoinJoinSalt()
-{
-    // Avoid fetching it multiple times
-    assert(nCoinJoinSalt.IsNull());
-
-    WalletBatch batch(*database);
-    if (!batch.ReadCoinJoinSalt(nCoinJoinSalt) && batch.ReadCoinJoinSalt(nCoinJoinSalt, true)) {
-        batch.WriteCoinJoinSalt(nCoinJoinSalt);
-    }
-
-    while (nCoinJoinSalt.IsNull()) {
-        // We never generated/saved it
-        nCoinJoinSalt = GetRandHash();
-        batch.WriteCoinJoinSalt(nCoinJoinSalt);
-    }
 }
 
 struct CompareByPriority
@@ -3318,52 +3085,6 @@ bool CWallet::FundTransaction(CMutableTransaction& tx, CAmount& nFeeRet, int& nC
     return true;
 }
 
-bool CWallet::SelectTxDSInsByDenomination(int nDenom, CAmount nValueMax, std::vector<CTxDSIn>& vecTxDSInRet)
-{
-    LOCK2(cs_main, cs_wallet);
-
-    CAmount nValueTotal{0};
-
-    std::set<uint256> setRecentTxIds;
-    std::vector<COutput> vCoins;
-
-    vecTxDSInRet.clear();
-
-    if (!CCoinJoin::IsValidDenomination(nDenom)) {
-        return false;
-    }
-    CAmount nDenomAmount = CCoinJoin::DenominationToAmount(nDenom);
-
-    CCoinControl coin_control;
-    coin_control.nCoinType = CoinType::ONLY_READY_TO_MIX;
-    AvailableCoins(vCoins, true, &coin_control);
-    LogPrint(BCLog::COINJOIN, "CWallet::%s -- vCoins.size(): %d\n", __func__, vCoins.size());
-
-    Shuffle(vCoins.rbegin(), vCoins.rend(), FastRandomContext());
-
-    for (const auto& out : vCoins) {
-        uint256 txHash = out.tx->GetHash();
-        CAmount nValue = out.tx->tx->vout[out.i].nValue;
-        if (setRecentTxIds.find(txHash) != setRecentTxIds.end()) continue; // no duplicate txids
-        if (nValueTotal + nValue > nValueMax) continue;
-        if (nValue != nDenomAmount) continue;
-
-        CTxIn txin = CTxIn(txHash, out.i);
-        CScript scriptPubKey = out.tx->tx->vout[out.i].scriptPubKey;
-        int nRounds = GetRealOutpointCoinJoinRounds(txin.prevout);
-
-        nValueTotal += nValue;
-        vecTxDSInRet.emplace_back(CTxDSIn(txin, scriptPubKey, nRounds));
-        setRecentTxIds.emplace(txHash);
-        LogPrint(BCLog::COINJOIN, "CWallet::%s -- hash: %s, nValue: %d.%08d\n",
-                        __func__, txHash.ToString(), nValue / COIN, nValue % COIN);
-    }
-
-    LogPrint(BCLog::COINJOIN, "CWallet::%s -- setRecentTxIds.size(): %d\n", __func__, setRecentTxIds.size());
-
-    return nValueTotal > 0;
-}
-
 bool CWallet::SelectCoinsGroupedByAddresses(std::vector<CompactTallyItem>& vecTallyRet, bool fSkipDenominated, bool fAnonymizable, bool fSkipUnconfirmed, int nMaxOupointsPerAddress) const
 {
     LOCK2(cs_main, cs_wallet);
@@ -3384,8 +3105,6 @@ bool CWallet::SelectCoinsGroupedByAddresses(std::vector<CompactTallyItem>& vecTa
             return vecTallyRet.size() > 0;
         }
     }
-
-    CAmount nSmallestDenom = CCoinJoin::GetSmallestDenomination();
 
     // Tally
     std::map<CTxDestination, CompactTallyItem> mapTally;
@@ -3415,15 +3134,10 @@ bool CWallet::SelectCoinsGroupedByAddresses(std::vector<CompactTallyItem>& vecTa
 
             if(IsSpent(outpoint.hash, i) || IsLockedCoin(outpoint.hash, i)) continue;
 
-            if(fSkipDenominated && CCoinJoin::IsDenominatedAmount(wtx.tx->vout[i].nValue)) continue;
+            if(fSkipDenominated) continue;
 
             if(fAnonymizable) {
-                // ignore collaterals
-                if(CCoinJoin::IsCollateralAmount(wtx.tx->vout[i].nValue)) continue;
                 if(fMasternodeMode && wtx.tx->vout[i].nValue == 150000*COIN) continue;
-                // ignore outputs that are 10 times smaller then the smallest denomination
-                // otherwise they will just lead to higher fee / lower priority
-                if(wtx.tx->vout[i].nValue <= nSmallestDenom/10) continue;
                 // ignore mixed
                 if (IsFullyMixed(COutPoint(outpoint.hash, i))) continue;
             }
@@ -3441,7 +3155,6 @@ bool CWallet::SelectCoinsGroupedByAddresses(std::vector<CompactTallyItem>& vecTa
     // NOTE: vecTallyRet is "sorted" by txdest (i.e. address), just like mapTally
     vecTallyRet.clear();
     for (const auto& item : mapTally) {
-        if(fAnonymizable && item.second.nAmount < nSmallestDenom) continue;
         vecTallyRet.push_back(item.second);
     }
 
@@ -3468,31 +3181,6 @@ bool CWallet::SelectCoinsGroupedByAddresses(std::vector<CompactTallyItem>& vecTa
     return vecTallyRet.size() > 0;
 }
 
-bool CWallet::SelectDenominatedAmounts(CAmount nValueMax, std::set<CAmount>& setAmountsRet) const
-{
-    LOCK2(cs_main, cs_wallet);
-
-    CAmount nValueTotal{0};
-    setAmountsRet.clear();
-
-    std::vector<COutput> vCoins;
-    CCoinControl coin_control;
-    coin_control.nCoinType = CoinType::ONLY_READY_TO_MIX;
-    AvailableCoins(vCoins, true, &coin_control);
-    // larger denoms first
-    std::sort(vCoins.rbegin(), vCoins.rend(), CompareByPriority());
-
-    for (const auto& out : vCoins) {
-        CAmount nValue = out.tx->tx->vout[out.i].nValue;
-        if (nValueTotal + nValue <= nValueMax) {
-            nValueTotal += nValue;
-            setAmountsRet.emplace(nValue);
-        }
-    }
-
-    return nValueTotal >= CCoinJoin::GetSmallestDenomination();
-}
-
 int CWallet::CountInputsWithAmount(CAmount nInputAmount) const
 {
     CAmount nTotal = 0;
@@ -3517,7 +3205,6 @@ bool CWallet::HasCollateralInputs(bool fOnlyConfirmed) const
 
     std::vector<COutput> vCoins;
     CCoinControl coin_control;
-    coin_control.nCoinType = CoinType::ONLY_COINJOIN_COLLATERAL;
     AvailableCoins(vCoins, fOnlyConfirmed, &coin_control);
 
     return !vCoins.empty();
@@ -3601,7 +3288,6 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CTransac
 
     // Secondly occasionally randomly pick a nLockTime even further back, so
     // that transactions that are delayed after signing for whatever reason,
-    // e.g. high-latency mix networks and some CoinJoin implementations, have
     // better privacy.
     if (GetRandInt(10) == 0)
         txNew.nLockTime = std::max(0, (int)txNew.nLockTime - GetRandInt(100));
@@ -3718,7 +3404,6 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CTransac
                             strFailReason = _("Unable to locate enough non-denominated funds for this transaction.");
                         } else if (coin_control.nCoinType == CoinType::ONLY_FULLY_MIXED) {
                             strFailReason = _("Unable to locate enough mixed funds for this transaction.");
-                            strFailReason += " " + strprintf(_("%s uses exact denominated amounts to send funds, you might simply need to mix some more coins."), "CoinJoin");
                         } else if (nValueIn < nValueToSelect) {
                             strFailReason = _("Insufficient funds.");
                         }
@@ -4094,7 +3779,6 @@ DBErrors CWallet::LoadWallet(bool& fFirstRunRet)
         }
     }
 
-    InitCoinJoinSalt();
 
     if (nLoadWalletRet != DBErrors::LOAD_OK)
         return nLoadWalletRet;
@@ -4247,7 +3931,6 @@ bool CWallet::NewKeyPool()
             batch.ErasePool(nIndex);
         }
         setExternalKeyPool.clear();
-        coinJoinClientManagers.at(GetName())->StopMixing();
         nKeysLeftSinceAutoBackup = 0;
 
         m_pool_key_to_index.clear();
@@ -5526,3 +5209,4 @@ bool CWalletTx::AcceptToMemoryPool(const CAmount& nAbsurdFee, CValidationState& 
     fInMempool |= ret;
     return ret;
 }
+

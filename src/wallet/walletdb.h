@@ -164,9 +164,6 @@ public:
     bool WriteAccount(const std::string& strAccount, const CAccount& account);
     bool EraseAccount(const std::string& strAccount);
 
-    bool ReadCoinJoinSalt(uint256& salt, bool fLegacy = false);
-    bool WriteCoinJoinSalt(const uint256& salt);
-
     /** Write a CGovernanceObject to the database */
     bool WriteGovernanceObject(const CGovernanceObject& obj);
 
@@ -219,3 +216,4 @@ private:
 void MaybeCompactWalletDB();
 
 #endif // BITCOIN_WALLET_WALLETDB_H
+

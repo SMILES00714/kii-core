@@ -112,7 +112,6 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const NetworkStyle* networkStyle,
     openRPCConsoleAction(0),
     openAction(0),
     showHelpMessageAction(0),
-    showCoinJoinHelpAction(0),
     trayIcon(0),
     trayIconMenu(0),
     dockIconMenu(0),
@@ -468,17 +467,12 @@ void BitcoinGUI::createActions()
     showHelpMessageAction->setMenuRole(QAction::NoRole);
     showHelpMessageAction->setStatusTip(tr("Show the %1 help message to get a list with possible KII command-line options").arg(tr(PACKAGE_NAME)));
 
-    showCoinJoinHelpAction = new QAction(tr("%1 &information").arg("CoinJoin"), this);
-    showCoinJoinHelpAction->setMenuRole(QAction::NoRole);
-    showCoinJoinHelpAction->setStatusTip(tr("Show the %1 basic information").arg("CoinJoin"));
-
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutClicked()));
     connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(optionsAction, SIGNAL(triggered()), this, SLOT(optionsClicked()));
     connect(toggleHideAction, SIGNAL(triggered()), this, SLOT(toggleHidden()));
     connect(showHelpMessageAction, SIGNAL(triggered()), this, SLOT(showHelpMessageClicked()));
-    connect(showCoinJoinHelpAction, SIGNAL(triggered()), this, SLOT(showCoinJoinHelpClicked()));
 
     // Jump directly to tabs in RPC-console
     connect(openInfoAction, SIGNAL(triggered()), this, SLOT(showInfo()));
@@ -749,7 +743,6 @@ void BitcoinGUI::setClientModel(ClientModel *_clientModel)
             // initialize the disable state of the tray icon with the current value in the model.
             setTrayIconVisible(optionsModel->getHideTrayIcon());
 
-            connect(optionsModel, SIGNAL(coinJoinEnabledChanged()), this, SLOT(updateCoinJoinVisibility()));
         }
     } else {
         // Disable possibility to show main window via action
@@ -778,7 +771,6 @@ void BitcoinGUI::setClientModel(ClientModel *_clientModel)
 #endif
     }
 
-    updateCoinJoinVisibility();
 }
 
 #ifdef ENABLE_WALLET
@@ -934,7 +926,6 @@ void BitcoinGUI::optionsClicked()
     });
     dlg.exec();
 
-    updateCoinJoinVisibility();
 }
 
 void BitcoinGUI::aboutClicked()
@@ -996,15 +987,6 @@ void BitcoinGUI::showHelpMessageClicked()
     helpMessageDialog->show();
 }
 
-void BitcoinGUI::showCoinJoinHelpClicked()
-{
-    if(!clientModel)
-        return;
-
-    HelpMessageDialog dlg(m_node, this, HelpMessageDialog::pshelp);
-    dlg.exec();
-}
-
 #ifdef ENABLE_WALLET
 void BitcoinGUI::openClicked()
 {
@@ -1054,11 +1036,6 @@ void BitcoinGUI::gotoSendCoinsPage(QString addr)
     if (walletFrame) walletFrame->gotoSendCoinsPage(addr);
 }
 
-void BitcoinGUI::gotoCoinJoinCoinsPage(QString addr)
-{
-
-
-}
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
 {
@@ -1171,26 +1148,6 @@ void BitcoinGUI::updateProgressBarVisibility()
     progressBar->setVisible(fShowProgressBar);
 }
 
-void BitcoinGUI::updateCoinJoinVisibility()
-{
-#ifdef ENABLE_WALLET
-    bool fEnabled = m_node.coinJoinOptions().isEnabled();
-#else
-    bool fEnabled = false;
-#endif
-    // CoinJoin button is the third QToolButton, show/hide the underlying QAction
-    // Hiding the QToolButton itself doesn't work for the GUI part
-    // but is still needed for shortcuts to work properly.
-    if (appToolBar != nullptr) {
-   
-  
-        GUIUtil::updateButtonGroupShortcuts(tabGroup);
-    }
-   
-    showCoinJoinHelpAction->setVisible(fEnabled);
-    updateWidth();
-}
-
 void BitcoinGUI::updateWidth()
 {
     if (walletFrame == nullptr) {
@@ -1222,9 +1179,7 @@ void BitcoinGUI::setNumBlocks(int count, const QDateTime& blockDate, const QStri
     // Disabling macOS App Nap on initial sync, disk, reindex operations and mixing.
     bool disableAppNap = !m_node.masternodeSync().isSynced();
 #ifdef ENABLE_WALLET
-    for (const auto& wallet : m_node.getWallets()) {
-        disableAppNap |= wallet->coinJoin().isMixing();
-    }
+
 #endif // ENABLE_WALLET
     if (disableAppNap) {
         m_app_nap_inhibitor->disableAppNap();
@@ -1517,9 +1472,6 @@ void BitcoinGUI::showEvent(QShowEvent *event)
     aboutAction->setEnabled(true);
     optionsAction->setEnabled(true);
 
-    if (!event->spontaneous()) {
-        updateCoinJoinVisibility();
-    }
 }
 
 #ifdef ENABLE_WALLET
@@ -1898,3 +1850,4 @@ void UnitDisplayStatusBarControl::onMenuSelection(QAction* action)
         optionsModel->setDisplayUnit(action->data());
     }
 }
+

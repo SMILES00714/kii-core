@@ -31,8 +31,8 @@ packages:
 - "libxkbcommon0"
 - "ccache"
 remotes:
-- "url": "https://github.com/kiipay/kii.git"
-  "dir": "kii"
+- "url": "https://github.com/kiiglobal/kii-core.git"
+  "dir": "kii-core"
 files: []
 script: |
 

@@ -510,42 +510,6 @@ passphrase
 \fB\-keepassport=\fR<port>
 .IP
 Connect to KeePassHttp on port <port> (default: 19455)
-.HP
-\fB\-coinjoinamount=\fR<n>
-.IP
-Target CoinJoin balance (2\-21000000, default: 1000)
-.HP
-\fB\-coinjoinautostart\fR
-.IP
-Start CoinJoin automatically (0\-1, default: 0)
-.HP
-\fB\-coinjoindenomsgoal=\fR<n>
-.IP
-Try to create at least N inputs of each denominated amount (10\-100000,
-default: 50)
-.HP
-\fB\-coinjoindenomshardcap=\fR<n>
-.IP
-Create up to N inputs of each denominated amount (10\-100000, default:
-300)
-.HP
-\fB\-coinjoinmultisession\fR
-.IP
-Enable multiple CoinJoin mixing sessions per block, experimental (0\-1,
-default: 0)
-.HP
-\fB\-coinjoinrounds=\fR<n>
-.IP
-Use N separate masternodes for each denominated input to mix funds
-(2\-16, default: 4)
-.HP
-\fB\-coinjoinsessions=\fR<n>
-.IP
-Use N separate masternodes in parallel to mix funds (1\-10, default: 4)
-.HP
-\fB\-enablecoinjoin\fR
-.IP
-Enable use of CoinJoin for funds stored in this wallet (0\-1, default: 0)
 .PP
 ZeroMQ notification options:
 .HP
@@ -611,7 +575,7 @@ output all debugging information. <category> can be: net, tor,
 mempool, http, bench, zmq, db, rpc, estimatefee, addrman,
 selectcoins, reindex, cmpctblock, rand, prune, proxy, mempoolrej,
 libevent, coindb, qt, leveldb, chainlocks, gobject, instantsend,
-keepass, llmq, llmq\-dkg, llmq\-sigs, mnpayments, mnsync, coinjoin,
+keepass, llmq, llmq\-dkg, llmq\-sigs, mnpayments, mnsync,
 spork, netconn.
 .HP
 \fB\-debugexclude=\fR<category>
@@ -870,7 +834,7 @@ Copyright (C) 2009-2022 The Bitcoin Core developers
 
 Please contribute if you find KII Core useful. Visit <https://kii.global> for
 further information about the software.
-The source code is available from <https://github.com/kiiglobal/kii>.
+The source code is available from <https://github.com/kiiglobal/kii-core>.
 
 This is experimental software.
 Distributed under the MIT software license, see the accompanying file COPYING
@@ -879,3 +843,4 @@ or <https://opensource.org/licenses/MIT>
 This product includes software developed by the OpenSSL Project for use in the
 OpenSSL Toolkit <https://www.openssl.org> and cryptographic software written by
 Eric Young and UPnP software written by Thomas Bernard.
+

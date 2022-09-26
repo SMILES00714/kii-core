@@ -6,7 +6,6 @@
 
 #include <amount.h>
 #include <chain.h>
-#include <coinjoin/coinjoin-client.h>
 #include <consensus/validation.h>
 #include <interfaces/handler.h>
 #include <net.h>
@@ -77,7 +76,7 @@ WalletTx MakeWalletTx(CWallet& wallet, const CWalletTx& wtx)
         result.txout_address_is_mine.emplace_back(ExtractDestination(txout.scriptPubKey, result.txout_address.back()) ?
                                                       IsMine(wallet, result.txout_address.back()) :
                                                       ISMINE_NO);
-        if (!fOutputDenomFound && result.txout_address_is_mine.back() && CCoinJoin::IsDenominatedAmount(txout.nValue)) {
+        if (!fOutputDenomFound && result.txout_address_is_mine.back()) {
             fOutputDenomFound = true;
         }
     }
@@ -127,55 +126,12 @@ WalletTxOut MakeWalletTxOut(CWallet& wallet, const CWalletTx& wtx, int n, int de
     return result;
 }
 
-class CoinJoinImpl : public CoinJoin::Client
-{
-    std::shared_ptr<CCoinJoinClientManager> m_manager;
-public:
-    CoinJoinImpl(CWallet& wallet) : m_manager(coinJoinClientManagers.at(wallet.GetName())) {}
-    void resetCachedBlocks() override
-    {
-        m_manager->nCachedNumBlocks = std::numeric_limits<int>::max();
-    }
-    void resetPool() override
-    {
-        m_manager->ResetPool();
-    }
-    void disableAutobackups() override
-    {
-        m_manager->fCreateAutoBackups = false;
-    }
-    int getCachedBlocks() override
-    {
-        return m_manager->nCachedNumBlocks;
-    }
-    std::string getSessionDenoms() override
-    {
-        return m_manager->GetSessionDenoms();
-    }
-    void setCachedBlocks(int nCachedBlocks) override
-    {
-       m_manager->nCachedNumBlocks = nCachedBlocks;
-    }
-    bool isMixing() override
-    {
-        return m_manager->IsMixing();
-    }
-    bool startMixing() override
-    {
-        return m_manager->StartMixing();
-    }
-    void stopMixing() override
-    {
-        m_manager->StopMixing();
-    }
-};
-
 class WalletImpl : public Wallet
 {
 public:
-    CoinJoinImpl m_coinjoin;
 
-    WalletImpl(const std::shared_ptr<CWallet>& wallet) : m_shared_wallet(wallet), m_wallet(*wallet.get()), m_coinjoin(*wallet.get()) {}
+
+    WalletImpl(const std::shared_ptr<CWallet>& wallet) : m_shared_wallet(wallet), m_wallet(*wallet.get()) {}
 
     void markDirty() override
     {
@@ -371,7 +327,6 @@ public:
         }
         return {};
     }
-    int getRealOutpointCoinJoinRounds(const COutPoint& outpoint) override { return m_wallet.GetRealOutpointCoinJoinRounds(outpoint); }
     bool isFullyMixed(const COutPoint& outpoint) override { return m_wallet.IsFullyMixed(outpoint); }
     WalletBalances getBalances() override
     {
@@ -379,7 +334,6 @@ public:
         result.balance = m_wallet.GetBalance();
         result.unconfirmed_balance = m_wallet.GetUnconfirmedBalance();
         result.immature_balance = m_wallet.GetImmatureBalance();
-        result.anonymized_balance = m_wallet.GetAnonymizedBalance();
         result.have_watch_only = m_wallet.HaveWatchOnly();
         if (result.have_watch_only) {
             result.watch_only_balance = m_wallet.GetBalance(ISMINE_WATCH_ONLY);
@@ -404,33 +358,9 @@ public:
     {
         return m_wallet.GetBalance();
     }
-    CAmount getAnonymizableBalance(bool fSkipDenominated, bool fSkipUnconfirmed) override
-    {
-        return m_wallet.GetAnonymizableBalance(fSkipDenominated, fSkipUnconfirmed);
-    }
-    CAmount getAnonymizedBalance() override
-    {
-        return m_wallet.GetAnonymizedBalance();
-    }
-    CAmount getDenominatedBalance(bool unconfirmed) override
-    {
-        return m_wallet.GetDenominatedBalance(unconfirmed);
-    }
-    CAmount getNormalizedAnonymizedBalance() override
-    {
-        return m_wallet.GetNormalizedAnonymizedBalance();
-    }
-    CAmount getAverageAnonymizedRounds() override
-    {
-        return m_wallet.GetAverageAnonymizedRounds();
-    }
     CAmount getAvailableBalance(const CCoinControl& coin_control) override
     {
-        if (coin_control.IsUsingCoinJoin()) {
-            return m_wallet.GetAnonymizedBalance(&coin_control);
-        } else {
             return m_wallet.GetAvailableBalance(&coin_control);
-        }
     }
     isminetype txinIsMine(const CTxIn& txin) override
     {
@@ -483,7 +413,6 @@ public:
         return result;
     }
     bool hdEnabled() override { return m_wallet.IsHDEnabled(); }
-    CoinJoin::Client& coinJoin() override { return m_coinjoin; }
     std::unique_ptr<Handler> handleUnload(UnloadFn fn) override
     {
         return MakeHandler(m_wallet.NotifyUnload.connect(fn));
@@ -531,3 +460,4 @@ public:
 std::unique_ptr<Wallet> MakeWallet(const std::shared_ptr<CWallet>& wallet) { return MakeUnique<WalletImpl>(wallet); }
 
 } // namespace interfaces
+

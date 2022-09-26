@@ -965,9 +965,6 @@ public:
     // Whether a ping is requested.
     std::atomic<bool> fPingQueued;
 
-    // If true, we will send him CoinJoin queue messages
-    std::atomic<bool> fSendDSQueue{false};
-
     // Challenge sent in VERSION to be answered with MNAUTH (only happens between MNs)
     mutable CCriticalSection cs_mnauth;
     uint256 sentMNAuthChallenge;
@@ -1148,3 +1145,4 @@ inline std::chrono::microseconds PoissonNextSend(std::chrono::microseconds now, 
 }
 
 #endif // BITCOIN_NET_H
+

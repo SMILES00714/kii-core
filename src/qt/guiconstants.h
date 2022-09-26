@@ -43,7 +43,7 @@ static const int MAX_URI_LENGTH = 255;
 #define SPINNER_FRAMES 90
 
 #define QAPP_ORG_NAME "KII"
-#define QAPP_ORG_DOMAIN "kii.org"
+#define QAPP_ORG_DOMAIN "kii.global"
 #define QAPP_APP_NAME_DEFAULT "KII-Qt"
 #define QAPP_APP_NAME_TESTNET "KII-Qt-testnet"
 #define QAPP_APP_NAME_DEVNET "KII-Qt-%s"

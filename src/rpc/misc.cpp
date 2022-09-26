@@ -199,7 +199,7 @@ UniValue validateaddress(const JSONRPCRequest& request)
             "validateaddress \"address\"\n"
             "\nReturn information about the given kii address.\n"
             "DEPRECATION WARNING: Parts of this command have been deprecated and moved to getaddressinfo. Clients must\n"
-            "transition to using getaddressinfo to access this information before upgrading to v0.18. The following deprecated\n"
+            "transition to using getaddressinfo to access this information before upgrading to v1.0.2. The following deprecated\n"
             "fields have moved to getaddressinfo and will only be shown here with -deprecatedrpc=validateaddress: ismine, iswatchonly,\n"
             "script, hex, pubkeys, sigsrequired, pubkey, addresses, embedded, iscompressed, account, timestamp, hdkeypath.\n"
             "\nArguments:\n"
@@ -285,7 +285,7 @@ UniValue createmultisig(const JSONRPCRequest& request)
         if (IsHex(keys[i].get_str()) && (keys[i].get_str().length() == 66 || keys[i].get_str().length() == 130)) {
             pubkeys.push_back(HexToPubKey(keys[i].get_str()));
         } else {
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, strprintf("Invalid public key: %s\nNote that from v0.16, createmultisig no longer accepts addresses."
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, strprintf("Invalid public key: %s\nNote that from v1.0.1, createmultisig no longer accepts addresses."
             " Users must use addmultisigaddress to create multisig addresses with addresses known to the wallet.", keys[i].get_str()));
         }
     }
@@ -1145,7 +1145,7 @@ static UniValue getinfo_deprecated(const JSONRPCRequest& request)
         "\nThis call was removed in version 0.16.0. Use the appropriate fields from:\n"
         "- getblockchaininfo: blocks, difficulty, chain\n"
         "- getnetworkinfo: version, protocolversion, timeoffset, connections, proxy, relayfee, warnings\n"
-        "- getwalletinfo: balance, coinjoin_balance, keypoololdest, keypoolsize, paytxfee, unlocked_until, walletversion\n"
+        "- getwalletinfo: balance, keypoololdest, keypoolsize, paytxfee, unlocked_until, walletversion\n"
         "\nkii-cli has the option -getinfo to collect and format these in the old format."
     );
 }
@@ -1186,3 +1186,4 @@ void RegisterMiscRPCCommands(CRPCTable &t)
     for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
         t.appendCommand(commands[vcidx].name, &commands[vcidx]);
 }
+

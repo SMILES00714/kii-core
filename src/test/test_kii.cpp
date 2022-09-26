@@ -18,7 +18,6 @@
 #include <rpc/register.h>
 #include <script/sigcache.h>
 
-#include <coinjoin/coinjoin.h>
 #include <evo/specialtx.h>
 #include <evo/deterministicmns.h>
 #include <evo/cbtx.h>
@@ -63,7 +62,6 @@ BasicTestingSetup::BasicTestingSetup(const std::string& chainName)
     SetupNetworking();
     InitSignatureCache();
     InitScriptExecutionCache();
-    CCoinJoin::InitStandardDenominations();
     fPrintToDebugLog = false; // don't want to write to debug.log file
     fCheckBlockIndex = true;
     SelectParams(chainName);
@@ -261,3 +259,4 @@ CBlock getBlock13b8a()
     stream >> block;
     return block;
 }
+

@@ -35,7 +35,6 @@
 #include <config/kii-config.h>
 #endif
 #ifdef ENABLE_WALLET
-#include <coinjoin/coinjoin-client-options.h>
 #include <wallet/fees.h>
 #include <wallet/wallet.h>
 #define CHECK_WALLET(x) x
@@ -89,66 +88,7 @@ public:
 };
 
 #ifdef ENABLE_WALLET
-class CoinJoinOptionsImpl : public CoinJoin::Options
-{
-public:
-    int getRounds() override
-    {
-        return CCoinJoinClientOptions::GetRounds();
-    }
-    int getAmount() override
-    {
-        return CCoinJoinClientOptions::GetAmount();
-    }
-    void setEnabled(bool fEnabled) override
-    {
-        return CCoinJoinClientOptions::SetEnabled(fEnabled);
-    }
-    void setMultiSessionEnabled(bool fEnabled) override
-    {
-        CCoinJoinClientOptions::SetMultiSessionEnabled(fEnabled);
-    }
-    void setRounds(int nRounds) override
-    {
-        CCoinJoinClientOptions::SetRounds(nRounds);
-    }
-    void setAmount(CAmount amount) override
-    {
-        CCoinJoinClientOptions::SetAmount(amount);
-    }
-    bool isEnabled() override
-    {
-        return CCoinJoinClientOptions::IsEnabled();
-    }
-    bool isMultiSessionEnabled() override
-    {
-        return CCoinJoinClientOptions::IsMultiSessionEnabled();
-    }
-    bool isCollateralAmount(CAmount nAmount) override
-    {
-        return CCoinJoin::IsCollateralAmount(nAmount);
-    }
-    CAmount getMinCollateralAmount() override
-    {
-        return CCoinJoin::GetCollateralAmount();
-    }
-    CAmount getMaxCollateralAmount() override
-    {
-        return CCoinJoin::GetMaxCollateralAmount();
-    }
-    CAmount getSmallestDenomination() override
-    {
-        return CCoinJoin::GetSmallestDenomination();
-    }
-    bool isDenominated(CAmount nAmount) override
-    {
-        return CCoinJoin::IsDenominatedAmount(nAmount);
-    }
-    std::vector<CAmount> getStandardDenominations() override
-    {
-        return CCoinJoin::GetStandardDenominations();
-    }
-};
+
 #endif
 
 class NodeImpl : public Node
@@ -157,7 +97,6 @@ class NodeImpl : public Node
     LLMQImpl m_llmq;
     MasternodeSyncImpl m_masternodeSync;
 #ifdef ENABLE_WALLET
-    CoinJoinOptionsImpl m_coinjoin;
 #endif
 
     void parseParameters(int argc, const char* const argv[]) override
@@ -368,7 +307,6 @@ class NodeImpl : public Node
     LLMQ& llmq() override { return m_llmq; }
     Masternode::Sync& masternodeSync() override { return m_masternodeSync; }
 #ifdef ENABLE_WALLET
-    CoinJoin::Options& coinJoinOptions() override { return m_coinjoin; }
 #endif
 
     std::unique_ptr<Handler> handleInitMessage(InitMessageFn fn) override
@@ -444,3 +382,4 @@ class NodeImpl : public Node
 std::unique_ptr<Node> MakeNode() { return MakeUnique<NodeImpl>(); }
 
 } // namespace interfaces
+

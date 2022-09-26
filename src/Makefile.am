@@ -135,11 +135,6 @@ BITCOIN_CORE_H = \
   checkpoints.h \
   checkqueue.h \
   clientversion.h \
-  coinjoin/coinjoin.h \
-  coinjoin/coinjoin-client.h \
-  coinjoin/coinjoin-client-options.h \
-  coinjoin/coinjoin-server.h \
-  coinjoin/coinjoin-util.h \
   coins.h \
   compat.h \
   compat/byteswap.h \
@@ -301,8 +296,6 @@ libkii_server_a_SOURCES = \
   blockfilter.cpp \
   chain.cpp \
   checkpoints.cpp \
-  coinjoin/coinjoin.cpp \
-  coinjoin/coinjoin-server.cpp \
   consensus/tx_verify.cpp \
   dsnotificationinterface.cpp \
   evo/cbtx.cpp \
@@ -392,9 +385,6 @@ endif
 libkii_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libkii_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libkii_wallet_a_SOURCES = \
-  coinjoin/coinjoin-client.cpp \
-  coinjoin/coinjoin-client-options.cpp \
-  coinjoin/coinjoin-util.cpp \
   interfaces/wallet.cpp \
   keepass.cpp \
   wallet/crypter.cpp \
@@ -769,3 +759,4 @@ endif
 if ENABLE_QT_TESTS
 include Makefile.qttest.include
 endif
+

@@ -36,12 +36,6 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "qt/addressbookpage -> qt/bitcoingui -> qt/walletview -> qt/signverifymessagedialog -> qt/addressbookpage"
     "qt/addressbookpage -> qt/bitcoingui -> qt/walletview -> qt/sendcoinsdialog -> qt/sendcoinsentry -> qt/addressbookpage"
     # KII
-    "coinjoin/coinjoin-server -> init -> coinjoin/coinjoin-server"
-    "coinjoin/coinjoin-server -> net_processing -> coinjoin/coinjoin-server"
-    "coinjoin/coinjoin -> llmq/quorums_chainlocks -> net -> coinjoin/coinjoin"
-    "coinjoin/coinjoin-client -> init -> dsnotificationinterface -> coinjoin/coinjoin-client"
-    "coinjoin/coinjoin-client -> init -> masternode/masternode-utils -> coinjoin/coinjoin-client"
-    "coinjoin/coinjoin-client -> init -> net_processing -> coinjoin/coinjoin-client"
     "evo/cbtx -> evo/simplifiedmns -> evo/cbtx"
     "evo/cbtx -> evo/specialtx -> evo/cbtx"
     "evo/deterministicmns -> evo/providertx -> evo/deterministicmns"
@@ -110,7 +104,6 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "logging -> util -> random -> logging"
     "logging -> util -> sync -> logging"
     "logging -> util -> stacktraces -> logging"
-    "coinjoin/coinjoin-client -> coinjoin/coinjoin-util -> wallet/wallet -> coinjoin/coinjoin-client"
     "qt/appearancewidget -> qt/guiutil -> qt/optionsdialog -> qt/appearancewidget"
     "qt/bitcoinaddressvalidator -> qt/guiutil -> qt/qvalidatedlineedit -> qt/bitcoinaddressvalidator"
     "qt/guiutil -> qt/optionsdialog -> qt/optionsmodel -> qt/guiutil"
@@ -166,3 +159,4 @@ for EXPECTED_CIRC in "${EXPECTED_CIRCULAR_DEPENDENCIES[@]}"; do
 done
 
 exit ${EXIT_CODE}
+

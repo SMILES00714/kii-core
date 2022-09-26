@@ -49,7 +49,7 @@ int getIndexForConfTarget(int target) {
     return confTargets.size() - 1;
 }
 
-SendCoinsDialog::SendCoinsDialog(bool _fCoinJoin, QWidget* parent) :
+SendCoinsDialog::SendCoinsDialog(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::SendCoinsDialog),
     clientModel(nullptr),
@@ -139,15 +139,10 @@ SendCoinsDialog::SendCoinsDialog(bool _fCoinJoin, QWidget* parent) :
     ui->checkBoxMinimumFee->setChecked(settings.value("fPayOnlyMinFee").toBool());
     minimizeFeeSection(settings.value("fFeeSectionMinimized").toBool());
 
-    if (_fCoinJoin) {
-        ui->sendButton->setText(tr("S&end mixed funds"));
-        ui->sendButton->setToolTip(tr("Confirm the %1 send action").arg("CoinJoin"));
-    } else {
-        ui->sendButton->setText(tr("S&end"));
-        ui->sendButton->setToolTip(tr("Confirm the send action"));
-    }
+    ui->sendButton->setText(tr("S&end"));
+    ui->sendButton->setToolTip(tr("Confirm the send action"));
 
-    m_coin_control->UseCoinJoin(_fCoinJoin);
+
 }
 
 void SendCoinsDialog::setClientModel(ClientModel *_clientModel)
@@ -359,12 +354,7 @@ void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients)
     questionString.append(formatted.join("<br />"));
     questionString.append("<br />");
 
-
-    if(m_coin_control->IsUsingCoinJoin()) {
-        questionString.append(tr("using") + " <b>" + tr("%1 funds only").arg("CoinJoin") + "</b>");
-    } else {
         questionString.append(tr("using") + " <b>" + tr("any available funds") + "</b>");
-    }
 
     if (displayedEntries < messageEntries) {
         questionString.append("<br />");
@@ -383,9 +373,6 @@ void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients)
         questionString.append("</span> ");
         questionString.append(tr("are added as transaction fee"));
 
-        if (m_coin_control->IsUsingCoinJoin()) {
-            questionString.append(" " + tr("(%1 transactions have higher fees usually due to no change output being allowed)").arg("CoinJoin"));
-        }
     }
 
     // Show some additioinal information
@@ -395,21 +382,6 @@ void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients)
     questionString.append("<br />");
     CFeeRate feeRate(txFee, currentTransaction.getTransactionSize());
     questionString.append(tr("Fee rate: %1").arg(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), feeRate.GetFeePerK())) + "/kB");
-
-    if (m_coin_control->IsUsingCoinJoin()) {
-        // append number of inputs
-        questionString.append("<hr />");
-        int nInputs = currentTransaction.getWtx()->get().vin.size();
-        questionString.append(tr("This transaction will consume %n input(s)", "", nInputs));
-
-        // warn about potential privacy issues when spending too many inputs at once
-        if (nInputs >= 10 && m_coin_control->IsUsingCoinJoin()) {
-            questionString.append("<br />");
-            questionString.append("<span style='" + GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_ERROR) + "'>");
-            questionString.append(tr("Warning: Using %1 with %2 or more inputs can harm your privacy and is not recommended").arg("CoinJoin").arg(10));
-            questionString.append("</span> ");
-        }
-    }
 
     // add total amount in all subdivision units
     questionString.append("<hr />");
@@ -439,7 +411,7 @@ void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients)
     }
 
     // now send the prepared transaction
-    WalletModel::SendCoinsReturn sendStatus = model->sendCoins(currentTransaction, m_coin_control->IsUsingCoinJoin());
+    WalletModel::SendCoinsReturn sendStatus = model->sendCoins(currentTransaction);
     // process sendStatus and on error generate message shown to user
     processSendCoinsReturn(sendStatus);
 
@@ -596,11 +568,8 @@ void SendCoinsDialog::setBalance(const interfaces::WalletBalances& balances)
     if(model && model->getOptionsModel())
     {
         CAmount bal = 0;
-        if (m_coin_control->IsUsingCoinJoin()) {
-            bal = balances.anonymized_balance;
-        } else {
+
             bal = balances.balance;
-        }
 
         ui->labelBalance->setText(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), bal));
     }
@@ -997,3 +966,4 @@ void SendConfirmationDialog::updateYesButton()
         yesButton->setText(tr("Yes"));
     }
 }
+

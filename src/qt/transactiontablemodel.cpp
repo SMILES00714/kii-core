@@ -379,8 +379,6 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
         return tr("Received with");
     case TransactionRecord::RecvFromOther:
         return tr("Received from");
-    case TransactionRecord::RecvWithCoinJoin:
-        return tr("Received via %1").arg("CoinJoin");
     case TransactionRecord::SendToAddress:
     case TransactionRecord::SendToOther:
         return tr("Sent to");
@@ -388,17 +386,6 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
         return tr("Payment to yourself");
     case TransactionRecord::Generated:
         return tr("Mined");
-
-    case TransactionRecord::CoinJoinMixing:
-        return tr("%1 Mixing").arg("CoinJoin");
-    case TransactionRecord::CoinJoinCollateralPayment:
-        return tr("%1 Collateral Payment").arg("CoinJoin");
-    case TransactionRecord::CoinJoinMakeCollaterals:
-        return tr("%1 Make Collateral Inputs").arg("CoinJoin");
-    case TransactionRecord::CoinJoinCreateDenominations:
-        return tr("%1 Create Denominations").arg("CoinJoin");
-    case TransactionRecord::CoinJoinSend:
-        return tr("%1 Send").arg("CoinJoin");
 
     default:
         return QString();
@@ -426,10 +413,8 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord *wtx, b
     case TransactionRecord::RecvFromOther:
         return QString::fromStdString(wtx->strAddress) + watchAddress;
     case TransactionRecord::RecvWithAddress:
-    case TransactionRecord::RecvWithCoinJoin:
     case TransactionRecord::SendToAddress:
     case TransactionRecord::Generated:
-    case TransactionRecord::CoinJoinSend:
         return formatAddressLabel(wtx->strAddress, wtx->label, tooltip) + watchAddress;
     case TransactionRecord::SendToOther:
         return QString::fromStdString(wtx->strAddress) + watchAddress;
@@ -447,18 +432,12 @@ QVariant TransactionTableModel::addressColor(const TransactionRecord *wtx) const
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::SendToAddress:
     case TransactionRecord::Generated:
-    case TransactionRecord::CoinJoinSend:
-    case TransactionRecord::RecvWithCoinJoin:
         {
         if (wtx->label.isEmpty()) {
             return GUIUtil::getThemedQColor(GUIUtil::ThemedColor::BAREADDRESS);
         }
         } break;
     case TransactionRecord::SendToSelf:
-    case TransactionRecord::CoinJoinCreateDenominations:
-    case TransactionRecord::CoinJoinMixing:
-    case TransactionRecord::CoinJoinMakeCollaterals:
-    case TransactionRecord::CoinJoinCollateralPayment:
         return GUIUtil::getThemedQColor(GUIUtil::ThemedColor::BAREADDRESS);
     default:
         break;
@@ -483,20 +462,14 @@ QVariant TransactionTableModel::amountColor(const TransactionRecord *rec) const
 {
     switch (rec->type) {
     case TransactionRecord::Generated:
-    case TransactionRecord::RecvWithCoinJoin:
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::RecvFromOther:
         return GUIUtil::getThemedQColor(GUIUtil::ThemedColor::GREEN);
-    case TransactionRecord::CoinJoinSend:
     case TransactionRecord::SendToAddress:
     case TransactionRecord::SendToOther:
     case TransactionRecord::Other:
         return GUIUtil::getThemedQColor(GUIUtil::ThemedColor::RED);
     case TransactionRecord::SendToSelf:
-    case TransactionRecord::CoinJoinMixing:
-    case TransactionRecord::CoinJoinCollateralPayment:
-    case TransactionRecord::CoinJoinMakeCollaterals:
-    case TransactionRecord::CoinJoinCreateDenominations:
         return GUIUtil::getThemedQColor(GUIUtil::ThemedColor::ORANGE);
     }
     return GUIUtil::getThemedQColor(GUIUtil::ThemedColor::DEFAULT);
@@ -828,3 +801,4 @@ void TransactionTableModel::unsubscribeFromCoreSignals()
     m_handler_address_book_changed->disconnect();
     m_handler_show_progress->disconnect();
 }
+
