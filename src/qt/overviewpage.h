@@ -60,7 +60,6 @@ private:
 
 private Q_SLOTS:
     void updateDisplayUnit();
-    void updateAdvancedCJUI(bool fShowAdvancedCJUI);
     void handleTransactionClicked(const QModelIndex &index);
     void updateAlerts(const QString &warnings);
     void updateWatchOnlyLabels(bool showWatchOnly);
@@ -68,4 +67,3 @@ private Q_SLOTS:
 };
 
 #endif // BITCOIN_QT_OVERVIEWPAGE_H
-

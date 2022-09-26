@@ -140,7 +140,7 @@ OverviewPage::OverviewPage(QWidget* parent) :
 
     // Recent transactions
     ui->listTransactions->setItemDelegate(txdelegate);
-    // Note: minimum height of listTransactions will be set later in updateAdvancedCJUI() to reflect actual settings
+    
     ui->listTransactions->setAttribute(Qt::WA_MacShowFocusRect, false);
 
     connect(ui->listTransactions, SIGNAL(clicked(QModelIndex)), this, SLOT(handleTransactionClicked(QModelIndex)));
@@ -255,10 +255,6 @@ void OverviewPage::setWalletModel(WalletModel *model)
         connect(model->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
         updateWatchOnlyLabels(wallet.haveWatchOnly() || gArgs.GetBoolArg("-debug-ui", false));
         connect(model, SIGNAL(notifyWatchonlyChanged(bool)), this, SLOT(updateWatchOnlyLabels(bool)));
-
-        // explicitly update PS frame and transaction list to reflect actual settings
-        updateAdvancedCJUI(model->getOptionsModel()->getShowAdvancedCJUI());
-
     }
 }
 
@@ -289,14 +285,8 @@ void OverviewPage::showOutOfSyncWarning(bool fShow)
     ui->labelWalletStatus->setVisible(fShow);
 
     ui->labelTransactionsStatus->setVisible(fShow);
-}
 
-void OverviewPage::updateAdvancedCJUI(bool fShowAdvancedCJUI)
-{
-    if (!walletModel || !clientModel) return;
-
-    this->fShowAdvancedCJUI = fShowAdvancedCJUI;
-
+    SetupTransactionList(NUM_ITEMS_ENABLED_NORMAL);
 }
 
 void OverviewPage::SetupTransactionList(int nNumItems)
@@ -323,5 +313,3 @@ void OverviewPage::SetupTransactionList(int nNumItems)
     filter->setLimit(nNumItems);
     ui->listTransactions->setMinimumHeight(nNumItems * ITEM_HEIGHT);
 }
-
-
