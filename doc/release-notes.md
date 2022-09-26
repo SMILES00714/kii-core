@@ -95,7 +95,7 @@ Also, enabling wallet encryption no longer requires a wallet restart.
 Sporks
 ------
 Several spork changes have been made to streamline code and improve system
-reliability. Activation of `SPORK_22_PS_MORE_PARTICIPANTS` in KII v0.16
+reliability. Activation of `SPORK_22_PS_MORE_PARTICIPANTS` in KII v1.0.1
 has rendered that spork unnecessary. The associated logic has been hardened
 and the spork removed. `SPORK_21_QUORUM_ALL_CONNECTED` logic has been split
 into two sporks, `SPORK_21_QUORUM_ALL_CONNECTED` and `SPORK_23_QUORUM_POSE`,
