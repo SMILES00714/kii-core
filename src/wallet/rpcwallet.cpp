@@ -1148,7 +1148,7 @@ UniValue sendmany(const JSONRPCRequest& request)
     if (!IsDeprecatedRPCEnabled("accounts")) {
         help_text = "sendmany \"\" {\"address\":amount,...} ( minconf addlocked \"comment\" [\"address\",...] subtractfeefrom use_is use_cj conf_target \"estimate_mode\")\n"
             "\nSend multiple times. Amounts are double-precision floating point numbers."
-            "Note that the \"fromaccount\" argument has been removed in V0.17. To use this RPC with a \"fromaccount\" argument, restart\n"
+            "Note that the \"fromaccount\" argument has been removed in v1.0.1. To use this RPC with a \"fromaccount\" argument, restart\n"
             "kiid with -deprecatedrpc=accounts\n"
             + HelpRequiringPassphrase(pwallet) + "\n"
             "\nArguments:\n"
@@ -1813,7 +1813,7 @@ UniValue listtransactions(const JSONRPCRequest& request)
         help_text = "listtransactions (label count skip include_watchonly)\n"
             "\nIf a label name is provided, this will return only incoming transactions paying to addresses with the specified label.\n"
             "\nReturns up to 'count' most recent transactions skipping the first 'from' transactions.\n"
-            "Note that the \"account\" argument and \"otheraccount\" return value have been removed in V0.17. To use this RPC with an \"account\" argument, restart\n"
+            "Note that the \"account\" argument and \"otheraccount\" return value have been removed in v1.0.1. To use this RPC with an \"account\" argument, restart\n"
             "kiid with -deprecatedrpc=accounts\n"
             "\nArguments:\n"
             "1. \"label\"    (string, optional) If set, should be a valid label name to return only incoming transactions\n"

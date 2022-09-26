@@ -790,7 +790,7 @@ UniValue submitblock(const JSONRPCRequest& request)
 
 UniValue estimatefee(const JSONRPCRequest& request)
 {
-    throw JSONRPCError(RPC_METHOD_DEPRECATED, "estimatefee was removed in v0.17.\n"
+    throw JSONRPCError(RPC_METHOD_DEPRECATED, "estimatefee was removed in v1.0.1.\n"
         "Clients should use estimatesmartfee.");
 }
 
