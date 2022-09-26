@@ -27,8 +27,8 @@ Build-Depends: debhelper,
  libzmq3-dev
 Standards-Version: 3.9.2
 Homepage: https://www.kii.org/
-Vcs-Git: git://github.com/kiipay/kii.git
-Vcs-Browser: https://github.com/kiipay/kii
+Vcs-Git: git://github.com/kiiglobal/kii-core.git
+Vcs-Browser: https://github.com/kiiglobal/kii-core
 
 Package: kiid
 Architecture: any
