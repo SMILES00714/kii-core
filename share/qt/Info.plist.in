@@ -35,7 +35,7 @@
   <true/>
 
   <key>CFBundleIdentifier</key>
-  <string>org.kii.KII-Qt</string>
+  <string>global.kii.KII-Qt</string>
 
   <key>CFBundleURLTypes</key>
   <array>
@@ -43,7 +43,7 @@
       <key>CFBundleTypeRole</key>
       <string>Editor</string>
       <key>CFBundleURLName</key>
-      <string>org.kii.KIIPayment</string>
+      <string>global.kii.KIIPayment</string>
       <key>CFBundleURLSchemes</key>
       <array>
         <string>kii</string>
@@ -55,7 +55,7 @@
   <array>
     <dict>
       <key>UTTypeIdentifier</key>
-      <string>org.kii.paymentrequest</string>
+      <string>global.kii.paymentrequest</string>
       <key>UTTypeDescription</key>
       <string>KII payment request</string>
       <key>UTTypeConformsTo</key>
@@ -81,7 +81,7 @@
       <string>Editor</string>
       <key>LSItemContentTypes</key>
       <array>
-        <string>org.kii.paymentrequest</string>
+        <string>global.kii.paymentrequest</string>
       </array>
       <key>LSHandlerRank</key>
       <string>Owner</string>
