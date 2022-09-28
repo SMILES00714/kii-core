@@ -5,7 +5,7 @@ Upstart: kiid.conf
 OpenRC:  kiid.openrc
          kiid.openrcconf
 CentOS:  kiid.init
-OS X:    org.kii.kiid.plist
+OS X:    global.kii.kiid.plist
 ```
 have been made available to assist packagers in creating node packages here.
 

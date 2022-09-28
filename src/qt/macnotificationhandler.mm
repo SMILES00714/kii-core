@@ -13,7 +13,7 @@
 - (NSString *)__bundleIdentifier
 {
     if (self == [NSBundle mainBundle]) {
-        return @"org.kii.KII-Qt";
+        return @"global.kii.KII-Qt";
     } else {
         return [self __bundleIdentifier];
     }
