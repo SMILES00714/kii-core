@@ -835,7 +835,7 @@ echo_small_close(sph_echo_small_context *sc, unsigned ub, unsigned n,
 		sc->C0 = sc->C1 = sc->C2 = sc->C3 = 0;
 	}
 	z = 0x80 >> n;
-	buf[ptr ++] = ((ub & -z) | z) & 0xFF;
+	buf[ptr ++] = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	memset(buf + ptr, 0, (sizeof sc->buf) - ptr);
 	if (ptr > ((sizeof sc->buf) - 18)) {
 		echo_small_compress(sc);
@@ -894,7 +894,7 @@ echo_big_close(sph_echo_big_context *sc, unsigned ub, unsigned n,
 		sc->C0 = sc->C1 = sc->C2 = sc->C3 = 0;
 	}
 	z = 0x80 >> n;
-	buf[ptr ++] = ((ub & -z) | z) & 0xFF;
+	buf[ptr ++] = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	memset(buf + ptr, 0, (sizeof sc->buf) - ptr);
 	if (ptr > ((sizeof sc->buf) - 18)) {
 		echo_big_compress(sc);
@@ -1029,3 +1029,4 @@ sph_echo512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 #ifdef __cplusplus
 }
 #endif
+

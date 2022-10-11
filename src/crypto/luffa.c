@@ -1105,7 +1105,7 @@ luffa3_close(sph_luffa224_context *sc, unsigned ub, unsigned n,
 	buf = sc->buf;
 	ptr = sc->ptr;
 	z = 0x80 >> n;
-	buf[ptr ++] = ((ub & -z) | z) & 0xFF;
+	buf[ptr ++] = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	memset(buf + ptr, 0, (sizeof sc->buf) - ptr);
 	READ_STATE3(sc);
 	for (i = 0; i < 2; i ++) {
@@ -1175,7 +1175,7 @@ luffa4_close(sph_luffa384_context *sc, unsigned ub, unsigned n, void *dst)
 	ptr = sc->ptr;
 	out = dst;
 	z = 0x80 >> n;
-	buf[ptr ++] = ((ub & -z) | z) & 0xFF;
+	buf[ptr ++] = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	memset(buf + ptr, 0, (sizeof sc->buf) - ptr);
 	READ_STATE4(sc);
 	for (i = 0; i < 3; i ++) {
@@ -1255,7 +1255,7 @@ luffa5_close(sph_luffa512_context *sc, unsigned ub, unsigned n, void *dst)
 	ptr = sc->ptr;
 	out = dst;
 	z = 0x80 >> n;
-	buf[ptr ++] = ((ub & -z) | z) & 0xFF;
+	buf[ptr ++] = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	memset(buf + ptr, 0, (sizeof sc->buf) - ptr);
 	READ_STATE5(sc);
 	for (i = 0; i < 3; i ++) {

@@ -41,7 +41,11 @@ CChainLocksHandler::CChainLocksHandler()
 CChainLocksHandler::~CChainLocksHandler()
 {
     scheduler_thread->interrupt();
-    scheduler_thread->join();
+    try {
+        scheduler_thread->join();
+    }
+    catch (int exception) {
+    }
     delete scheduler_thread;
     delete scheduler;
 }
@@ -725,3 +729,4 @@ bool AreChainLocksEnabled()
 }
 
 } // namespace llmq
+

@@ -970,7 +970,7 @@ skein_big_close(sph_skein_big_context *sc, unsigned ub, unsigned n,
 		unsigned char x;
 
 		z = 0x80 >> n;
-		x = ((ub & -z) | z) & 0xFF;
+		x = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 		skein_big_core(sc, &x, 1);
 	}
 
@@ -1252,3 +1252,4 @@ sph_skein512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 #ifdef __cplusplus
 }
 #endif
+

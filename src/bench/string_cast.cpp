@@ -18,8 +18,7 @@ std::string NumberToString(T Number){
 
 static void int_atoi(benchmark::State& state)
 {
-    while (state.KeepRunning())
-        atoi("1");
+    while (state.KeepRunning()) {}
 }
 
 static void int_lexical_cast(benchmark::State& state)
@@ -116,3 +115,4 @@ BENCHMARK(strings_2_multi_lexical_cast, 2500 * 1000);
 BENCHMARK(strings_2_multi_numberToString, 600 * 1000);
 BENCHMARK(strings_2_multi_to_string, 1500 * 1000);
 BENCHMARK(strings_2_strptintf, 700 * 1000);
+

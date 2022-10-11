@@ -339,7 +339,8 @@ CNode* CConnman::FindNode(const CNetAddr& ip, bool fExcludeDisconnecting)
         if (fExcludeDisconnecting && pnode->fDisconnect) {
             continue;
         }
-        if (static_cast<CNetAddr>(pnode->addr) == ip) {
+        const CNetAddr *pAddr = &pnode->addr;
+        if (*pAddr == ip) {
             return pnode;
         }
     }
@@ -353,7 +354,8 @@ CNode* CConnman::FindNode(const CSubNet& subNet, bool fExcludeDisconnecting)
         if (fExcludeDisconnecting && pnode->fDisconnect) {
             continue;
         }
-        if (subNet.Match(static_cast<CNetAddr>(pnode->addr))) {
+        const CNetAddr *pAddr = &pnode->addr;
+        if (subNet.Match(*pAddr)) {
             return pnode;
         }
     }
@@ -381,7 +383,8 @@ CNode* CConnman::FindNode(const CService& addr, bool fExcludeDisconnecting)
         if (fExcludeDisconnecting && pnode->fDisconnect) {
             continue;
         }
-        if (static_cast<CService>(pnode->addr) == addr) {
+        const CService *pAddr = &pnode->addr;
+        if (*pAddr == addr) {
             return pnode;
         }
     }
@@ -423,7 +426,8 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCo
         }
 
         // Look for an existing connection
-        CNode* pnode = FindNode(static_cast<CService>(addrConnect));
+        const CService *pAddr = &addrConnect;
+        CNode* pnode = FindNode(*pAddr);
         if (pnode)
         {
             LogPrintf("Failed to open new connection, already connected\n");
@@ -456,7 +460,8 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCo
             // Also store the name we used to connect in that CNode, so that future FindNode() calls to that
             // name catch this early.
             LOCK(cs_vNodes);
-            CNode* pnode = FindNode(static_cast<CService>(addrConnect));
+            const CService *pAddr = &addrConnect;
+            CNode* pnode = FindNode(*pAddr);
             if (pnode)
             {
                 pnode->MaybeSetAddrName(std::string(pszDest));
@@ -638,7 +643,8 @@ void CConnman::Ban(const CSubNet& subNet, const BanReason &banReason, int64_t ba
     {
         LOCK(cs_vNodes);
         for (CNode* pnode : vNodes) {
-            if (subNet.Match(static_cast<CNetAddr>(pnode->addr)))
+            const CNetAddr *pAddr = &pnode->addr;
+            if (subNet.Match(*pAddr))
                 pnode->fDisconnect = true;
         }
     }
@@ -2769,8 +2775,10 @@ void CConnman::OpenNetworkConnection(const CAddress& addrConnect, bool fCountFai
         if (!fAllowLocal && IsLocal(addrConnect))
             return;
         // if multiple ports for same IP are allowed, search for IP:PORT match, otherwise search for IP-only match
-        if ((!Params().AllowMultiplePorts() && FindNode(static_cast<CNetAddr>(addrConnect))) ||
-            (Params().AllowMultiplePorts() && FindNode(static_cast<CService>(addrConnect))))
+        const CNetAddr *pAddr1 = &addrConnect;
+        const CNetAddr *pAddr2 = &addrConnect;
+        if ((!Params().AllowMultiplePorts() && FindNode(*pAddr1) ||
+            (Params().AllowMultiplePorts() && FindNode(*pAddr2))))
             return;
     } else if (FindNode(std::string(pszDest)))
         return;
@@ -3997,7 +4005,8 @@ bool CConnman::ForNode(const CService& addr, std::function<bool(const CNode* pno
     CNode* found = nullptr;
     LOCK(cs_vNodes);
     for (auto&& pnode : vNodes) {
-        if((CService)pnode->addr == addr) {
+        const CService *pAddr = &pnode->addr;
+        if(*pAddr == addr) {
             found = pnode;
             break;
         }
@@ -4160,4 +4169,5 @@ void CConnman::UnregisterEvents(CNode *pnode)
     }
 #endif
 }
+
 

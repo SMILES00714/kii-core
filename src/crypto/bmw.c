@@ -684,7 +684,7 @@ bmw32_close(sph_bmw_small_context *sc, unsigned ub, unsigned n,
 	buf = sc->buf;
 	ptr = sc->ptr;
 	z = 0x80 >> n;
-	buf[ptr ++] = ((ub & -z) | z) & 0xFF;
+	buf[ptr ++] = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	h = sc->H;
 	if (ptr > (sizeof sc->buf) - 8) {
 		memset(buf + ptr, 0, (sizeof sc->buf) - ptr);
@@ -818,7 +818,7 @@ bmw64_close(sph_bmw_big_context *sc, unsigned ub, unsigned n,
 	buf = sc->buf;
 	ptr = sc->ptr;
 	z = 0x80 >> n;
-	buf[ptr ++] = ((ub & -z) | z) & 0xFF;
+	buf[ptr ++] = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	h = sc->H;
 	if (ptr > (sizeof sc->buf) - 8) {
 		memset(buf + ptr, 0, (sizeof sc->buf) - ptr);
@@ -963,3 +963,4 @@ sph_bmw512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 #ifdef __cplusplus
 }
 #endif
+

@@ -85,14 +85,14 @@ CAddrInfo* CAddrMan::Find(const CService& addr, int* pnId)
 
 CAddrInfo* CAddrMan::Create(const CAddress& addr, const CNetAddr& addrSource, int* pnId)
 {
-    CService addr2 = addr;
+    CService *addr2 = (CService*)&addr;
     if (!discriminatePorts) {
-        addr2.SetPort(0);
+        addr2->SetPort(0);
     }
 
     int nId = nIdCount++;
     mapInfo[nId] = CAddrInfo(addr, addrSource);
-    mapAddr[addr2] = nId;
+    mapAddr[*addr2] = nId;
     mapInfo[nId].nRandomPos = vRandom.size();
     vRandom.push_back(nId);
     if (pnId)
@@ -127,14 +127,14 @@ void CAddrMan::Delete(int nId)
     assert(!info.fInTried);
     assert(info.nRefCount == 0);
 
-    CService addr = info;
+    CService *addr = (CService*)&info;
     if (!discriminatePorts) {
-        addr.SetPort(0);
+        addr->SetPort(0);
     }
 
     SwapRandom(info.nRandomPos, vRandom.size() - 1);
     vRandom.pop_back();
-    mapAddr.erase(addr);
+    mapAddr.erase(*addr);
     mapInfo.erase(nId);
     nNew--;
 }
@@ -644,3 +644,4 @@ CAddrInfo CAddrMan::SelectTriedCollision_()
 
     return mapInfo[id_old];
 }
+

@@ -178,7 +178,6 @@ bool Reader::ReadRecord(Slice* record, std::string* scratch) {
       }
     }
   }
-  return false;
 }
 
 uint64_t Reader::LastRecordOffset() {
@@ -282,3 +281,4 @@ unsigned int Reader::ReadPhysicalRecord(Slice* result) {
 
 }  // namespace log
 }  // namespace leveldb
+

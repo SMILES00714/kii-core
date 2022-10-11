@@ -1526,7 +1526,7 @@ shavite_small_close(sph_shavite_small_context *sc,
 	count0 = (sc->count0 += (ptr << 3) + n);
 	count1 = sc->count1;
 	z = 0x80 >> n;
-	z = ((ub & -z) | z) & 0xFF;
+	z = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	if (ptr == 0 && n == 0) {
 		buf[0] = 0x80;
 		memset(buf + 1, 0, 53);
@@ -1613,7 +1613,7 @@ shavite_big_close(sph_shavite_big_context *sc,
 	count2 = sc->count2;
 	count3 = sc->count3;
 	z = 0x80 >> n;
-	z = ((ub & -z) | z) & 0xFF;
+	z = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	if (ptr == 0 && n == 0) {
 		buf[0] = 0x80;
 		memset(buf + 1, 0, 109);

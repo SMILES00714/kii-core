@@ -2827,7 +2827,7 @@ groestl_small_close(sph_groestl_small_context *sc,
 	buf = sc->buf;
 	ptr = sc->ptr;
 	z = 0x80 >> n;
-	pad[0] = ((ub & -z) | z) & 0xFF;
+	pad[0] = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	if (ptr < 56) {
 		pad_len = 64 - ptr;
 #if SPH_64
@@ -2963,7 +2963,7 @@ groestl_big_close(sph_groestl_big_context *sc,
 	buf = sc->buf;
 	ptr = sc->ptr;
 	z = 0x80 >> n;
-	pad[0] = ((ub & -z) | z) & 0xFF;
+	pad[0] = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	if (ptr < 120) {
 		pad_len = 128 - ptr;
 #if SPH_64
@@ -3121,3 +3121,4 @@ sph_groestl512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 #ifdef __cplusplus
 }
 #endif
+

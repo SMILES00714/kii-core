@@ -964,7 +964,7 @@ jh_close(sph_jh_context *sc, unsigned ub, unsigned n,
 #endif
 
 	z = 0x80 >> n;
-	buf[0] = ((ub & -z) | z) & 0xFF;
+	buf[0] = ((ub & ((~z) & 0xFF)) | z) & 0xFF;
 	if (sc->ptr == 0 && n == 0) {
 		numz = 47;
 	} else {
@@ -1114,3 +1114,4 @@ sph_jh512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 #ifdef __cplusplus
 }
 #endif
+

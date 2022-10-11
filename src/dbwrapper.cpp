@@ -57,8 +57,15 @@ public:
                 }
 
                 // Add newline if necessary
-                if (p == base || p[-1] != '\n') {
+                if (p == base) {
                     *p++ = '\n';
+                }
+                else
+                {
+                    char* p1 = p-1;
+                    if (*p1 != '\n') {
+                        *p++ = '\n';
+                    }
                 }
 
                 assert(p <= limit);
@@ -256,3 +263,4 @@ const std::vector<unsigned char>& GetObfuscateKey(const CDBWrapper &w)
 }
 
 } // namespace dbwrapper_private
+

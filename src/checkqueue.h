@@ -206,9 +206,14 @@ public:
         if (!fDone)
             Wait();
         if (pqueue != nullptr) {
-            LEAVE_CRITICAL_SECTION(pqueue->ControlMutex);
+            try {
+                LEAVE_CRITICAL_SECTION(pqueue->ControlMutex);
+            }
+            catch (int exception) {
+            }
         }
     }
 };
 
 #endif // BITCOIN_CHECKQUEUE_H
+
