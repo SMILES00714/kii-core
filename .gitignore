@@ -140,3 +140,10 @@ make
 # CLion
 .idea
 cmake-build-debug
+
+#SonarCloud files
+/.scannerwork/
+/scannerwork/
+/bw-output/
+sonar-cfamily-reproducer.zip
+
