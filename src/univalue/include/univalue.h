@@ -15,6 +15,7 @@
 #include <cassert>
 
 #include <sstream>        // .get_int64()
+#include <climits>
 #include <utility>        // std::pair
 
 class UniValue {
@@ -147,7 +148,7 @@ public:
                       unsigned int indentLevel = 0) const;
 
     bool read(const char *raw, size_t len);
-    bool read(const char *raw) { return read(raw, strlen(raw)); }
+    bool read(const char *raw) { return read(raw, strnlen(raw, INT_MAX)); }
     bool read(const std::string& rawStr) {
         return read(rawStr.data(), rawStr.size());
     }
@@ -304,3 +305,4 @@ extern const UniValue NullUniValue;
 const UniValue& find_value( const UniValue& obj, const std::string& name);
 
 #endif // __UNIVALUE_H__
+

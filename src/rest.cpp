@@ -93,7 +93,7 @@ static std::string AvailableDataFormatsString()
 {
     std::string formats;
     for (unsigned int i = 0; i < ARRAYLEN(rf_names); i++)
-        if (strlen(rf_names[i].name) > 0) {
+        if (strnlen(rf_names[i].name, INT_MAX) > 0) {
             formats.append(".");
             formats.append(rf_names[i].name);
             formats.append(", ");
@@ -603,3 +603,4 @@ void StopREST()
     for (unsigned int i = 0; i < ARRAYLEN(uri_prefixes); i++)
         UnregisterHTTPHandler(uri_prefixes[i].prefix, false);
 }
+

@@ -712,7 +712,7 @@ crash_info GetCrashInfoFromException(const std::exception_ptr& e)
 
     auto getExceptionType = [&]() -> std::string {
         auto type = abi::__cxa_current_exception_type();
-        if (type && (strlen(type->name()) > 0)) {
+        if (type && (strnlen(type->name(), INT_MAX) > 0)) {
             return DemangleSymbol(type->name());
         }
         return "<unknown>";
@@ -891,3 +891,4 @@ void RegisterPrettySignalHandlers()
     }
 #endif
 }
+

@@ -665,7 +665,7 @@ bool BerkeleyBatch::Rewrite(BerkeleyDatabase& database, const char* pszSkip)
                                 break;
                             }
                             if (pszSkip &&
-                                strncmp(ssKey.data(), pszSkip, std::min(ssKey.size(), strlen(pszSkip))) == 0)
+                                strncmp(ssKey.data(), pszSkip, std::min(ssKey.size(), strnlen(pszSkip, INT_MAX))) == 0)
                                 continue;
                             if (strncmp(ssKey.data(), "\x07version", 8) == 0) {
                                 // Update version:
@@ -860,3 +860,4 @@ void BerkeleyDatabase::ReloadDbEnv()
         env->ReloadDbEnv();
     }
 }
+

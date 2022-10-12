@@ -9,6 +9,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <climits>
 #include <errno.h>
 #include <limits>
 
@@ -160,7 +161,7 @@ std::vector<unsigned char> DecodeBase64(const char* p, bool* pfInvalid)
 
     const char* e = p;
     std::vector<uint8_t> val;
-    val.reserve(strlen(p));
+    val.reserve(strnlen(p, INT_MAX));
     while (*p != 0) {
         int x = decode64_table[(unsigned char)*p];
         if (x == -1) break;
@@ -229,7 +230,7 @@ std::vector<unsigned char> DecodeBase32(const char* p, bool* pfInvalid)
 
     const char* e = p;
     std::vector<uint8_t> val;
-    val.reserve(strlen(p));
+    val.reserve(strnlen(p, INT_MAX));
     while (*p != 0) {
         int x = decode32_table[(unsigned char)*p];
         if (x == -1) break;
@@ -267,7 +268,7 @@ NODISCARD static bool ParsePrechecks(const std::string& str)
         return false;
     if (str.size() >= 1 && (isspace(str[0]) || isspace(str[str.size()-1]))) // No padding allowed
         return false;
-    if (str.size() != strlen(str.c_str())) // No embedded NUL characters allowed
+    if (str.size() != strnlen(str.c_str(), INT_MAX)) // No embedded NUL characters allowed
         return false;
     return true;
 }
@@ -543,3 +544,4 @@ bool ParseFixedPoint(const std::string &val, int decimals, int64_t *amount_out)
 
     return true;
 }
+

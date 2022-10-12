@@ -1388,7 +1388,7 @@ bool DBImpl::GetProperty(const Slice& property, std::string* value) {
   in.remove_prefix(prefix.size());
 
   if (in.starts_with("num-files-at-level")) {
-    in.remove_prefix(strlen("num-files-at-level"));
+    in.remove_prefix(strnlen("num-files-at-level", INT_MAX));
     uint64_t level;
     bool ok = ConsumeDecimalNumber(&in, &level) && in.empty();
     if (!ok || level >= config::kNumLevels) {
@@ -1566,3 +1566,4 @@ Status DestroyDB(const std::string& dbname, const Options& options) {
 }
 
 }  // namespace leveldb
+

@@ -22,7 +22,7 @@ static bool ParsePrechecks(const std::string& str)
         return false;
     if (str.size() >= 1 && (json_isspace(str[0]) || json_isspace(str[str.size()-1]))) // No padding allowed
         return false;
-    if (str.size() != strlen(str.c_str())) // No embedded NUL characters allowed
+    if (str.size() != strnlen(str.c_str(), INT_MAX)) // No embedded NUL characters allowed
         return false;
     return true;
 }
@@ -144,4 +144,5 @@ const UniValue& UniValue::get_array() const
         throw std::runtime_error("JSON value is not an array as expected");
     return *this;
 }
+
 

@@ -149,7 +149,7 @@ bool CZMQAbstractPublishNotifier::SendMessage(const char *command, const void* d
     /* send three parts, command & data & a LE 4byte sequence number */
     unsigned char msgseq[sizeof(uint32_t)];
     WriteLE32(&msgseq[0], nSequence);
-    int rc = zmq_send_multipart(psocket, command, strlen(command), data, size, msgseq, (size_t)sizeof(uint32_t), nullptr);
+    int rc = zmq_send_multipart(psocket, command, strnlen(command, INT_MAX), data, size, msgseq, (size_t)sizeof(uint32_t), nullptr);
     if (rc == -1)
         return false;
 
@@ -370,4 +370,5 @@ bool CZMQPublishRawRecoveredSigNotifier::NotifyRecoveredSig(const std::shared_pt
 
     return SendMessage(MSG_RAWRECSIG, &(*ss.begin()), ss.size());
 }
+
 

@@ -91,7 +91,7 @@ bool ParseFileName(const std::string& fname,
     *number = 0;
     *type = kInfoLogFile;
   } else if (rest.starts_with("MANIFEST-")) {
-    rest.remove_prefix(strlen("MANIFEST-"));
+    rest.remove_prefix(strnlen("MANIFEST-", INT_MAX));
     uint64_t num;
     if (!ConsumeDecimalNumber(&rest, &num)) {
       return false;
@@ -142,3 +142,4 @@ Status SetCurrentFile(Env* env, const std::string& dbname,
 }
 
 }  // namespace leveldb
+

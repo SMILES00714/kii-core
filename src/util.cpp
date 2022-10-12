@@ -670,7 +670,7 @@ fs::path GetDefaultDataDir()
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
-    if (pszHome == nullptr || strlen(pszHome) == 0)
+    if (pszHome == nullptr || strnlen(pszHome, INT_MAX) == 0)
         pathRet = fs::path("/");
     else
         pathRet = fs::path(pszHome);
@@ -1180,4 +1180,5 @@ int ScheduleBatchPriority(void)
     return 1;
 #endif
 }
+
 

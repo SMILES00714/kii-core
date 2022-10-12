@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>
+#include <climits>
 #include <string>
 
 namespace leveldb {
@@ -34,7 +35,7 @@ class Slice {
   Slice(const std::string& s) : data_(s.data()), size_(s.size()) { }
 
   // Create a slice that refers to s[0,strlen(s)-1]
-  Slice(const char* s) : data_(s), size_(strlen(s)) { }
+  Slice(const char* s) : data_(s), size_(strnlen(s, INT_MAX)) { }
 
   // Return a pointer to the beginning of the referenced data
   const char* data() const { return data_; }
@@ -107,3 +108,4 @@ inline int Slice::compare(const Slice& b) const {
 
 
 #endif  // STORAGE_LEVELDB_INCLUDE_SLICE_H_
+
