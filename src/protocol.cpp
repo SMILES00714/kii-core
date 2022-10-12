@@ -161,7 +161,7 @@ CMessageHeader::CMessageHeader(const MessageStartChars& pchMessageStartIn, const
 {
     memcpy(pchMessageStart, pchMessageStartIn, MESSAGE_START_SIZE);
     memset(pchCommand, 0, sizeof(pchCommand));
-    strncpy(pchCommand, pszCommand, COMMAND_SIZE);
+    memcpy(pchCommand, pszCommand, COMMAND_SIZE);
     nMessageSize = nMessageSizeIn;
     memset(pchChecksum, 0, CHECKSUM_SIZE);
 }
