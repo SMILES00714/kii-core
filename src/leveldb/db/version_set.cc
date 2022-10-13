@@ -644,10 +644,18 @@ class VersionSet::Builder {
     for (int level = 0; level < config::kNumLevels; level++) {
       const FileSet* added = levels_[level].added_files;
       std::vector<FileMetaData*> to_unref;
-      to_unref.reserve(added->size());
+      try {
+        to_unref.reserve(added->size());
+      }
+      catch (int exception) {
+      }
       for (FileSet::const_iterator it = added->begin();
           it != added->end(); ++it) {
-        to_unref.push_back(*it);
+            try {
+              to_unref.push_back(*it);
+            }
+            catch (int exception) {
+            }
       }
       delete added;
       for (uint32_t i = 0; i < to_unref.size(); i++) {
@@ -1396,10 +1404,10 @@ void VersionSet::SetupOtherInputs(Compaction* c) {
   }
 
   if (false) {
-    Log(options_->info_log, "Compacting %d '%s' .. '%s'",
-        level,
-        smallest.DebugString().c_str(),
-        largest.DebugString().c_str());
+    // Log(options_->info_log, "Compacting %d '%s' .. '%s'",
+    //     level,
+    //     smallest.DebugString().c_str(),
+    //     largest.DebugString().c_str());
   }
 
   // Update the place where we will do the next compaction for this level.
@@ -1533,3 +1541,4 @@ void Compaction::ReleaseInputs() {
 }
 
 }  // namespace leveldb
+

@@ -1240,7 +1240,7 @@ void CConnman::AcceptConnection(const ListenSocket& hListenSocket) {
     // on all platforms.  Set it again here just to be sure.
     SetSocketNoDelay(hSocket);
 
-    if (IsBanned(addr) && !whitelisted)
+    if (IsBanned(*(CNetAddr*)&addr) && !whitelisted)
     {
         LogPrint(BCLog::NET, "%s (banned)\n", strDropped);
         CloseSocket(hSocket);
@@ -2509,7 +2509,8 @@ void CConnman::ThreadOpenConnections(const std::vector<std::string> connect)
             if ((!isMasternode || !Params().AllowMultiplePorts()) && addr.GetPort() != Params().GetDefaultPort() && addr.GetPort() != GetListenPort() && nTries < 50)
                 continue;
 
-            addrConnect = addr;
+            CAddress* pAddrConnect = &addrConnect;
+            *pAddrConnect = *(CAddress*)&addr;
             break;
         }
 
@@ -2775,10 +2776,8 @@ void CConnman::OpenNetworkConnection(const CAddress& addrConnect, bool fCountFai
         if (!fAllowLocal && IsLocal(addrConnect))
             return;
         // if multiple ports for same IP are allowed, search for IP:PORT match, otherwise search for IP-only match
-        const CNetAddr *pAddr1 = &addrConnect;
-        const CNetAddr *pAddr2 = &addrConnect;
-        if ((!Params().AllowMultiplePorts() && FindNode(*pAddr1) ||
-            (Params().AllowMultiplePorts() && FindNode(*pAddr2))))
+        if ((!Params().AllowMultiplePorts() && FindNode(static_cast<CNetAddr>(*(CNetAddr*)&addrConnect))) ||
+            (Params().AllowMultiplePorts() && FindNode(static_cast<CService>(*(CService*)&addrConnect))))
             return;
     } else if (FindNode(std::string(pszDest)))
         return;
@@ -3437,7 +3436,11 @@ void CConnman::DeleteNode(CNode* pnode)
 CConnman::~CConnman()
 {
     Interrupt();
-    Stop();
+    try {
+        Stop();
+    }
+    catch (int exception) {
+    }
 }
 
 size_t CConnman::GetAddressCount() const

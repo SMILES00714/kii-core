@@ -109,7 +109,7 @@ public:
             {
                 std::unique_lock<std::mutex> lock(cs);
                 while (running && queue.empty())
-                    cond.wait(lock);
+                    cond.wait(lock, [this]{return !running;});
                 if (!running)
                     break;
                 i = std::move(queue.front());

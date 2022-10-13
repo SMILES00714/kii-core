@@ -506,7 +506,6 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                 {
                     return set_error(serror, SCRIPT_ERR_OP_RETURN);
                 }
-                break;
 
 
                 //
@@ -1607,3 +1606,4 @@ bool VerifyScript(const CScript& scriptSig, const CScript& scriptPubKey, unsigne
 
     return set_success(serror);
 }
+

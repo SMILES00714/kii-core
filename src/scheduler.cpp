@@ -180,7 +180,11 @@ void SingleThreadedSchedulerClient::ProcessQueue() {
                 LOCK(instance->m_cs_callbacks_pending);
                 instance->m_are_callbacks_running = false;
             }
-            instance->MaybeScheduleProcessQueue();
+            try {
+                instance->MaybeScheduleProcessQueue();
+            }
+            catch (int exception) {
+            }
         }
     } raiicallbacksrunning(this);
 
@@ -211,3 +215,4 @@ size_t SingleThreadedSchedulerClient::CallbacksPending() {
     LOCK(m_cs_callbacks_pending);
     return m_callbacks_pending.size();
 }
+

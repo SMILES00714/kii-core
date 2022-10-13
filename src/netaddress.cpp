@@ -540,12 +540,12 @@ unsigned short CService::GetPort() const
 
 bool operator==(const CService& a, const CService& b)
 {
-    return static_cast<CNetAddr>(a) == static_cast<CNetAddr>(b) && a.port == b.port;
+    return static_cast<CNetAddr>(*(CNetAddr*)&a) == static_cast<CNetAddr>(*(CNetAddr*)&b) && a.port == b.port;
 }
 
 bool operator<(const CService& a, const CService& b)
 {
-    return static_cast<CNetAddr>(a) < static_cast<CNetAddr>(b) || (static_cast<CNetAddr>(a) == static_cast<CNetAddr>(b) && a.port < b.port);
+    return static_cast<CNetAddr>(*(CNetAddr*)&a) < static_cast<CNetAddr>(*(CNetAddr*)&b) || (static_cast<CNetAddr>(*(CNetAddr*)&a) == static_cast<CNetAddr>(*(CNetAddr*)&b) && a.port < b.port);
 }
 
 bool CService::GetSockAddr(struct sockaddr* paddr, socklen_t *addrlen) const
@@ -744,3 +744,4 @@ bool operator<(const CSubNet& a, const CSubNet& b)
 {
     return (a.network < b.network || (a.network == b.network && memcmp(a.netmask, b.netmask, 16) < 0));
 }
+

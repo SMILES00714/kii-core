@@ -19,7 +19,11 @@ public:
     }
 
     ~reverse_lock() {
-        templock.lock();
+        try {
+            templock.lock();
+        }
+        catch (int exception) {
+        }
         templock.swap(lock);
     }
 
@@ -32,3 +36,4 @@ private:
 };
 
 #endif // BITCOIN_REVERSELOCK_H
+

@@ -365,7 +365,7 @@ struct CNodeState {
 
     ObjectDownloadState m_object_download;
 
-    CNodeState(CAddress addrIn, std::string addrNameIn) : address(addrIn), name(addrNameIn) {
+    CNodeState(CAddress addrIn, std::string addrNameIn) : address(*(CService*)&addrIn), name(addrNameIn) {
         fCurrentlyConnected = false;
         nMisbehavior = 0;
         fShouldBan = false;
@@ -4394,4 +4394,5 @@ public:
         nMapOrphanTransactionsSize = 0;
     }
 } instance_of_cnetprocessingcleanup;
+
 

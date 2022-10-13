@@ -203,14 +203,15 @@ public:
 
     ~CCheckQueueControl()
     {
-        if (!fDone)
-            Wait();
-        if (pqueue != nullptr) {
+        if (!fDone) {
             try {
-                LEAVE_CRITICAL_SECTION(pqueue->ControlMutex);
+                Wait();
             }
             catch (int exception) {
             }
+        }
+        if (pqueue != nullptr) {
+            LEAVE_CRITICAL_SECTION(pqueue->ControlMutex);
         }
     }
 };

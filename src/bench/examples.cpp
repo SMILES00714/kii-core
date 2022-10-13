@@ -25,10 +25,13 @@ volatile double sum = 0.0; // volatile, global so not optimized away
 static void Trig(benchmark::State& state)
 {
     double d = 0.01;
+    double sum_t = 0;
     while (state.KeepRunning()) {
-        sum += sin(d);
+        sum_t = sum;
+        sum = sum_t + sin(d);
         d += 0.000001;
     }
 }
 
 BENCHMARK(Trig, 12 * 1000 * 1000);
+
