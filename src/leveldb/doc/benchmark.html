@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>LevelDB Benchmarks</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -90,9 +90,9 @@ div.bsql {
 <h4>Benchmark Source Code</h4>
 <p>We wrote benchmark tools for SQLite and Kyoto TreeDB based on LevelDB's <span class="code">db_bench</span>. The code for each of the benchmarks resides here:</p>
 <ul>
-	<li> <b>LevelDB:</b> <a href="http://code.google.com/p/leveldb/source/browse/trunk/db/db_bench.cc">db/db_bench.cc</a>.</li>
-	<li> <b>SQLite:</b> <a href="http://code.google.com/p/leveldb/source/browse/#svn%2Ftrunk%2Fdoc%2Fbench%2Fdb_bench_sqlite3.cc">doc/bench/db_bench_sqlite3.cc</a>.</li>
-	<li> <b>Kyoto TreeDB:</b> <a href="http://code.google.com/p/leveldb/source/browse/#svn%2Ftrunk%2Fdoc%2Fbench%2Fdb_bench_tree_db.cc">doc/bench/db_bench_tree_db.cc</a>.</li>
+	<li> <strong>LevelDB:</strong> <a href="http://code.google.com/p/leveldb/source/browse/trunk/db/db_bench.cc">db/db_bench.cc</a>.</li>
+	<li> <strong>SQLite:</strong> <a href="http://code.google.com/p/leveldb/source/browse/#svn%2Ftrunk%2Fdoc%2Fbench%2Fdb_bench_sqlite3.cc">doc/bench/db_bench_sqlite3.cc</a>.</li>
+	<li> <strong>Kyoto TreeDB:</strong> <a href="http://code.google.com/p/leveldb/source/browse/#svn%2Ftrunk%2Fdoc%2Fbench%2Fdb_bench_tree_db.cc">doc/bench/db_bench_tree_db.cc</a>.</li>
 </ul>
 
 <h4>Custom Build Specifications</h4>
@@ -122,52 +122,79 @@ parameters are varied.  For the baseline:</p>
 </ul>
 
 <h3>A. Sequential Reads</h3>
-<table class="bn bnbase">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">4,030,000 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">1,010,000 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:95px">&nbsp;</div></td>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">383,000 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:33px">&nbsp;</div></td>
+<table class="bn bnbase" aria-describedby="A. Sequential Reads">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr>
+        <td class="c1">LevelDB</td>
+        <td class="c2">4,030,000 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    </tr>
+    <tr>
+        <td class="c1">Kyoto TreeDB</td>
+        <td class="c2">1,010,000 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:95px">&nbsp;</div></td>
+    </tr>
+    <tr>
+        <td class="c1">SQLite3</td>
+        <td class="c2">383,000 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:33px">&nbsp;</div></td>
+    </tr>
 </table>
 <h3>B. Random Reads</h3>
-<table class="bn bnbase">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">129,000 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:298px">&nbsp;</div></td>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">151,000 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:350px">&nbsp;</div></td>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">134,000 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:310px">&nbsp;</div></td>
+<table class="bn bnbase" aria-describedby="B. Random Reads">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr><td class="c1">LevelDB</td>
+        <td class="c2">129,000 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:298px">&nbsp;</div></td>
+    </tr>
+    <tr>
+        <td class="c1">Kyoto TreeDB</td>
+        <td class="c2">151,000 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:350px">&nbsp;</div></td>
+    </tr>
+    <tr>
+        <td class="c1">SQLite3</td>
+        <td class="c2">134,000 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:310px">&nbsp;</div></td>
+    </tr>
 </table>
 <h3>C. Sequential Writes</h3>
-<table class="bn bnbase">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">779,000 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">342,000 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:154px">&nbsp;</div></td>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">48,600 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:22px">&nbsp;</div></td>
+<table class="bn bnbase" aria-describedby="C. Sequential Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr>
+        <td class="c1">LevelDB</td>
+        <td class="c2">779,000 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    </tr>
+    <tr>
+        <td class="c1">Kyoto TreeDB</td>
+        <td class="c2">342,000 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:154px">&nbsp;</div></td>
+    </tr>
+    <tr>
+        <td class="c1">SQLite3</td>
+        <td class="c2">48,600 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:22px">&nbsp;</div></td>
+    </tr>
 </table>
 <h3>D. Random Writes</h3>
-<table class="bn bnbase">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">164,000 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">88,500 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:188px">&nbsp;</div></td>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">9,860 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:21px">&nbsp;</div></td>
+<table class="bn bnbase" aria-describedby="D. Random Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr>
+        <td class="c1">LevelDB</td>
+        <td class="c2">164,000 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+    </tr>
+    <tr>
+        <td class="c1">Kyoto TreeDB</td>
+        <td class="c2">88,500 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:188px">&nbsp;</div></td>
+    </tr>
+    <tr>
+        <td class="c1">SQLite3</td>
+        <td class="c2">9,860 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:21px">&nbsp;</div></td>
+    </tr>   
 </table>
 
 <p>LevelDB outperforms both SQLite3 and TreeDB in sequential and random write operations and sequential read operations. Kyoto Cabinet has the fastest random read operations.</p>
@@ -176,28 +203,36 @@ parameters are varied.  For the baseline:</p>
 <h3>A. Large Values </h3>
 <p>For this benchmark, we start with an empty database, and write 100,000 byte values (~50% compressible). To keep the benchmark running time reasonable, we stop after writing 1000 values.</p>
 <h4>Sequential Writes</h4>
-<table class="bn bnbase">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">1,100 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:234px">&nbsp;</div></td></tr>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">1,000 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:224px">&nbsp;</div></td></tr>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">1,600 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:350px">&nbsp;</div></td></tr>
+<table class="bn bnbase"  aria-describedby="Sequential Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr><td class="c1">LevelDB</td>
+        <td class="c2">1,100 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:234px">&nbsp;</div></td>
+    </tr>
+    <tr><td class="c1">Kyoto TreeDB</td>
+        <td class="c2">1,000 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:224px">&nbsp;</div></td>
+    </tr>
+    <tr><td class="c1">SQLite3</td>
+        <td class="c2">1,600 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:350px">&nbsp;</div></td>
+    </tr>
 </table>
 <h4>Random Writes</h4>
-<table class="bn bnbase">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">480 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:105px">&nbsp;</div></td></tr>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">1,100 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:240px">&nbsp;</div></td></tr>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">1,600 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:350px">&nbsp;</div></td></tr>
+<table class="bn bnbase" aria-describedby="Random Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr><td class="c1">LevelDB</td>
+        <td class="c2">480 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:105px">&nbsp;</div></td>
+    </tr>
+    <tr><td class="c1">Kyoto TreeDB</td>
+        <td class="c2">1,100 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:240px">&nbsp;</div></td>
+    </tr>
+    <tr><td class="c1">SQLite3</td>
+        <td class="c2">1,600 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:350px">&nbsp;</div></td>
+    </tr>
 </table>
 <p>LevelDB doesn't perform as well with large values of 100,000 bytes each. This is because LevelDB writes keys and values at least twice: first time to the transaction log, and second time (during a compaction) to a sorted file.
 With larger values, LevelDB's per-operation efficiency is swamped by the
@@ -205,26 +240,32 @@ cost of extra copies of large values.</p>
 <h3>B. Batch Writes</h3>
 <p>A batch write is a set of writes that are applied atomically to the underlying database. A single batch of N writes may be significantly faster than N individual writes. The following benchmark writes one thousand batches where each batch contains one thousand 100-byte values. TreeDB does not support batch writes and is omitted from this benchmark.</p>
 <h4>Sequential Writes</h4>
-<table class="bn">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">840,000 entries/sec</td>
-    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
-    <td class="c4">(1.08x baseline)</td></tr>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">124,000 entries/sec</td>
-    <td class="c3"><div class="bsql" style="width:52px">&nbsp;</div></td>
-    <td class="c4">(2.55x baseline)</td></tr>
+<table class="bn"  aria-describedby="Sequential Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr><td class="c1">LevelDB</td>
+        <td class="c2">840,000 entries/sec</td>
+        <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+        <td class="c4">(1.08x baseline)</td>
+    </tr>
+    <tr><td class="c1">SQLite3</td>
+        <td class="c2">124,000 entries/sec</td>
+        <td class="c3"><div class="bsql" style="width:52px">&nbsp;</div></td>
+        <td class="c4">(2.55x baseline)</td>
+    </tr>
 </table>
 <h4>Random Writes</h4>
-<table class="bn">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">221,000 entries/sec</td>
-    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
-    <td class="c4">(1.35x baseline)</td></tr>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">22,000 entries/sec</td>
-    <td class="c3"><div class="bsql" style="width:34px">&nbsp;</div></td>
-    <td class="c4">(2.23x baseline)</td></tr>
+<table class="bn" aria-describedby="Random Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr><td class="c1">LevelDB</td>
+        <td class="c2">221,000 entries/sec</td>
+        <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+        <td class="c4">(1.35x baseline)</td>
+    </tr>
+    <tr><td class="c1">SQLite3</td>
+        <td class="c2">22,000 entries/sec</td>
+        <td class="c3"><div class="bsql" style="width:34px">&nbsp;</div></td>
+        <td class="c4">(2.23x baseline)</td>
+    </tr>
 </table>
 
 <p>Because of the way LevelDB persistent storage is organized, batches of
@@ -242,34 +283,42 @@ disabled hard drive write-caching (using `hdparm -W 0 [device]`).</p>
     <li>For SQLite3, we set "PRAGMA synchronous = FULL".</li>
 </ul>
 <h4>Sequential Writes</h4>
-<table class="bn">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">100 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
-    <td class="c4">(0.003x baseline)</td></tr>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">7 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:27px">&nbsp;</div></td>
-    <td class="c4">(0.0004x baseline)</td></tr>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">88 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:315px">&nbsp;</div></td>
-    <td class="c4">(0.002x baseline)</td></tr>
+<table class="bn" aria-describedby="Sequential Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr><td class="c1">LevelDB</td>
+        <td class="c2">100 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+        <td class="c4">(0.003x baseline)</td>
+    </tr>
+    <tr><td class="c1">Kyoto TreeDB</td>
+        <td class="c2">7 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:27px">&nbsp;</div></td>
+        <td class="c4">(0.0004x baseline)</td>
+    </tr>
+    <tr><td class="c1">SQLite3</td>
+        <td class="c2">88 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:315px">&nbsp;</div></td>
+        <td class="c4">(0.002x baseline)</td>
+    </tr>
 </table>
 <h4>Random Writes</h4>
-<table class="bn">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">100 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
-    <td class="c4">(0.015x baseline)</td></tr>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">8 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:29px">&nbsp;</div></td>
-    <td class="c4">(0.001x baseline)</td></tr>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">88 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:314px">&nbsp;</div></td>
-    <td class="c4">(0.009x baseline)</td></tr>
+<table class="bn" aria-describedby="Random Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr><td class="c1">LevelDB</td>
+        <td class="c2">100 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+        <td class="c4">(0.015x baseline)</td>
+    </tr>
+    <tr><td class="c1">Kyoto TreeDB</td>
+        <td class="c2">8 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:29px">&nbsp;</div></td>
+        <td class="c4">(0.001x baseline)</td>
+    </tr>
+    <tr><td class="c1">SQLite3</td>
+        <td class="c2">88 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:314px">&nbsp;</div></td>
+        <td class="c4">(0.009x baseline)</td>
+    </tr>
 </table>
 
 <p>Also see the <code>ext4</code> performance numbers below
@@ -288,34 +337,48 @@ all of the databases (the SQLite3 numbers are just a copy of
 its baseline measurements):</p>
 
 <h4>Sequential Writes</h4>
-<table class="bn">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">594,000 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
-    <td class="c4">(0.76x baseline)</td></tr>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">485,000 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:239px">&nbsp;</div></td>
-    <td class="c4">(1.42x baseline)</td></tr>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">48,600 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:29px">&nbsp;</div></td>
-    <td class="c4">(1.00x baseline)</td></tr>
+<table class="bn"  aria-describedby="Sequential Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr>
+        <td class="c1">LevelDB</td>
+        <td class="c2">594,000 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+        <td class="c4">(0.76x baseline)</td>
+    </tr>
+    <tr>
+        <td class="c1">Kyoto TreeDB</td>
+        <td class="c2">485,000 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:239px">&nbsp;</div></td>
+        <td class="c4">(1.42x baseline)</td>
+    </tr>
+    <tr>
+        <td class="c1">SQLite3</td>
+        <td class="c2">48,600 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:29px">&nbsp;</div></td>
+        <td class="c4">(1.00x baseline)</td>
+    </tr>
 </table>
 <h4>Random Writes</h4>
-<table class="bn">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">135,000 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:296px">&nbsp;</div></td>
-    <td class="c4">(0.82x baseline)</td></tr>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">159,000 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:350px">&nbsp;</div></td>
-    <td class="c4">(1.80x baseline)</td></tr>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">9,860 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:22px">&nbsp;</div></td>
-    <td class="c4">(1.00x baseline)</td></tr>
+<table class="bn" aria-describedby="Random Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr>
+        <td class="c1">LevelDB</td>
+        <td class="c2">135,000 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:296px">&nbsp;</div></td>
+        <td class="c4">(0.82x baseline)</td>
+    </tr>
+    <tr>
+        <td class="c1">Kyoto TreeDB</td>
+        <td class="c2">159,000 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:350px">&nbsp;</div></td>
+        <td class="c4">(1.80x baseline)</td>
+    </tr>
+    <tr>
+        <td class="c1">SQLite3</td>
+        <td class="c2">9,860 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:22px">&nbsp;</div></td>
+        <td class="c4">(1.00x baseline)</td>
+    </tr>
 </table>
 
 <p>LevelDB's write performance is better with compression than without
@@ -330,34 +393,36 @@ LevelDB's compression library (Snappy).<p>
 <h3>E. Using More Memory</h3>
 <p>We increased the overall cache size for each database to 128 MB. For LevelDB, we partitioned 128 MB into a 120 MB write buffer and 8 MB of cache (up from 2 MB of write buffer and 2 MB of cache). For SQLite3, we kept the page size at 1024 bytes, but increased the number of pages to 131,072 (up from 4096). For TreeDB, we also kept the page size at 1024 bytes, but increased the cache size to 128 MB (up from 4 MB).</p>
 <h4>Sequential Writes</h4>
-<table class="bn">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">812,000 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
-    <td class="c4">(1.04x baseline)</td></tr>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">321,000 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:138px">&nbsp;</div></td>
-    <td class="c4">(0.94x baseline)</td></tr>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">48,500 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:21px">&nbsp;</div></td>
-    <td class="c4">(1.00x baseline)</td></tr>
+<table class="bn" aria-describedby="Sequential Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr><td class="c1">LevelDB</td>
+        <td class="c2">812,000 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+        <td class="c4">(1.04x baseline)</td></tr>
+    <tr><td class="c1">Kyoto TreeDB</td>
+        <td class="c2">321,000 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:138px">&nbsp;</div></td>
+        <td class="c4">(0.94x baseline)</td></tr>
+    <tr><td class="c1">SQLite3</td>
+        <td class="c2">48,500 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:21px">&nbsp;</div></td>
+        <td class="c4">(1.00x baseline)</td></tr>
 </table>
 <h4>Random Writes</h4>
-<table class="bn">
-<tr><td class="c1">LevelDB</td>
-    <td class="c2">355,000 ops/sec</td>
-    <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
-    <td class="c4">(2.16x baseline)</td></tr>
-<tr><td class="c1">Kyoto TreeDB</td>
-    <td class="c2">284,000 ops/sec</td>
-    <td class="c3"><div class="bkct" style="width:280px">&nbsp;</div></td>
-    <td class="c4">(3.21x baseline)</td></tr>
-<tr><td class="c1">SQLite3</td>
-    <td class="c2">9,670 ops/sec</td>
-    <td class="c3"><div class="bsql" style="width:10px">&nbsp;</div></td>
-    <td class="c4">(0.98x baseline)</td></tr>
+<table class="bn" aria-describedby="Random Writes">
+    <tr style="display: none"><th>&nbsp;</th></tr>
+    <tr><td class="c1">LevelDB</td>
+        <td class="c2">355,000 ops/sec</td>
+        <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
+        <td class="c4">(2.16x baseline)</td></tr>
+    <tr><td class="c1">Kyoto TreeDB</td>
+        <td class="c2">284,000 ops/sec</td>
+        <td class="c3"><div class="bkct" style="width:280px">&nbsp;</div></td>
+        <td class="c4">(3.21x baseline)</td></tr>
+    <tr><td class="c1">SQLite3</td>
+        <td class="c2">9,670 ops/sec</td>
+        <td class="c3"><div class="bsql" style="width:10px">&nbsp;</div></td>
+        <td class="c4">(0.98x baseline)</td></tr>
 </table>
 
 <p>SQLite's performance does not change substantially when compared to
@@ -376,7 +441,8 @@ to LevelDB's cache. The other databases don't differentiate between a
 write buffer and a cache, so we simply set their cache size to 128
 MB.</p>
 <h4>Sequential Reads</h4>
-<table class="bn">
+<table class="bn" aria-describedby="Sequential Reads">
+    <tr style="display: none"><th>&nbsp;</th></tr>
 <tr><td class="c1">LevelDB</td>
     <td class="c2">5,210,000 ops/sec</td>
     <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
@@ -392,7 +458,8 @@ MB.</p>
 </table>
 
 <h4>Random Reads</h4>
-<table class="bn">
+<table class="bn" aria-describedby="Random Reads">
+    <tr style="display: none"><th>&nbsp;</th></tr>
 <tr><td class="c1">LevelDB</td>
     <td class="c2">190,000 ops/sec</td>
     <td class="c3"><div class="bldb" style="width:144px">&nbsp;</div></td>
@@ -415,7 +482,8 @@ database.</p>
 <h3>B. No Compression Reads </h3>
 <p>For this benchmark, we populated a database with 1 million entries consisting of 16 byte keys and 100 byte values. We compiled LevelDB and Kyoto Cabinet without compression support, so results that are read out from the database are already uncompressed. We've listed the SQLite3 baseline read performance as a point of comparison.</p>
 <h4>Sequential Reads</h4>
-<table class="bn">
+<table class="bn" aria-describedby="Sequential Reads">
+    <tr style="display: none"><th>&nbsp;</th></tr>
 <tr><td class="c1">LevelDB</td>
     <td class="c2">4,880,000 ops/sec</td>
     <td class="c3"><div class="bldb" style="width:350px">&nbsp;</div></td>
@@ -430,7 +498,8 @@ database.</p>
     <td class="c4">(1.00x baseline)</td></tr>
 </table>
 <h4>Random Reads</h4>
-<table class="bn">
+<table class="bn" aria-describedby="Random Reads">
+    <tr style="display: none"><th>&nbsp;</th></tr>
 <tr><td class="c1">LevelDB</td>
     <td class="c2">149,000 ops/sec</td>
     <td class="c3"><div class="bldb" style="width:300px">&nbsp;</div></td>
