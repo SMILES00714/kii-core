@@ -250,7 +250,7 @@ struct node
         assert(idx1 != idx2);
         auto p = make_inner_n(n, 2);
         p->impl.d.data.inner.datamap = (bitmap_t{1u} << idx1) | (bitmap_t{1u} << idx2);
-        auto assign = [&] (auto&& x1, auto&& x2) {
+        auto assign = [&] (auto x1, auto x2) {
             auto vp = p->values();
             try {
                 new (vp) T{std::move(x1)};
