@@ -7,7 +7,7 @@ architectures:
 packages:
 - "faketime"
 remotes:
-- "url": "https://github.com/kiiglobal/kii-detached-sigs.git"
+- "url": "https://github.com/kiiglobal/kii-core"
   "dir": "signature"
 files:
 - "kii-osx-unsigned.tar.gz"
@@ -35,3 +35,4 @@ script: |
   ./detached-sig-apply.sh ${UNSIGNED} signature/osx
   ${WRAP_DIR}/genisoimage -no-cache-inodes -D -l -probe -V "${OSX_VOLNAME}" -no-pad -r -dir-mode 0755 -apple -o uncompressed.dmg signed-app
   ${WRAP_DIR}/dmg dmg uncompressed.dmg ${OUTDIR}/${SIGNED}
+

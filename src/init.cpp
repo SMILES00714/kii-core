@@ -1985,7 +1985,7 @@ bool AppInitMain()
                 }
 
                 if (!fDisableGovernance && !fTxIndex
-                   && chainparams.NetworkIDString() != CBaseChainParams::REGTEST) { // TODO remove this when pruning is fixed. See https://github.com/kiiglobal/pull/1817 and https://github.com/kiiglobal/pull/1743
+                   && chainparams.NetworkIDString() != CBaseChainParams::REGTEST) {
                     return InitError(_("Transaction index can't be disabled with governance validation enabled. Either start with -disablegovernance command line switch or enable transaction index."));
                 }
 
@@ -2443,4 +2443,5 @@ bool AppInitMain()
 
     return true;
 }
+
 

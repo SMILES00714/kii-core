@@ -4,8 +4,6 @@ run using Python 3 but are compatible with Python 2.
 
 ## Step 0: Install kii_hash
 
-https://github.com/kiiglobal/kii_hash
-
 ## Step 1: Download hash list
 
     $ ./linearize-hashes.py linearize.cfg > hashlist.txt
@@ -57,3 +55,4 @@ will be byte-reversed when read by linearize-data.py. See the linearize-hashes
 entry for more information.
 * `split_timestamp`: Split blockchain files when a new month is first seen, in
 addition to reaching a maximum file size (`max_out_sz`).
+

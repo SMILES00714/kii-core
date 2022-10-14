@@ -18,7 +18,7 @@ RUN pip3 install jinja2
 RUN pip3 install flake8
 
 # kii_hash
-RUN git clone https://github.com/kiiglobal/kii_hash
+RUN // kii_hash file
 RUN cd kii_hash && python3 setup.py install
 
 ARG USER_ID=1000
@@ -65,3 +65,4 @@ RUN mkdir /kii-src && \
 WORKDIR /kii-src
 
 USER kii
+

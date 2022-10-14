@@ -22,10 +22,6 @@ def setup():
             print('Cannot find any way to install Docker', file=sys.stderr)
             exit(1)
     subprocess.check_call(['sudo', 'apt-get', 'install', '-qq'] + programs)
-    if not os.path.isdir('gitian.sigs'):
-        subprocess.check_call(['git', 'clone', 'https://github.com/kiiglobal/gitian.sigs.git'])
-    if not os.path.isdir('kii-detached-sigs'):
-        subprocess.check_call(['git', 'clone', 'https://github.com/kiiglobal/kii-detached-sigs.git'])
     if not os.path.isdir('gitian-builder'):
         subprocess.check_call(['git', 'clone', 'https://github.com/devrandom/gitian-builder.git'])
     if not os.path.isdir('kii'):
@@ -237,3 +233,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
