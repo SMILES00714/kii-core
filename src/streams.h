@@ -529,7 +529,11 @@ public:
 
     ~BitStreamWriter()
     {
-        Flush();
+        try {
+            Flush();
+        }
+        catch (int exception) {
+        }
     }
 
     /** Write the nbits least significant bits of a 64-bit int to the output
@@ -829,3 +833,4 @@ public:
 };
 
 #endif // BITCOIN_STREAMS_H
+

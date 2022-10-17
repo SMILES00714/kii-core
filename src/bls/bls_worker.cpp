@@ -587,7 +587,7 @@ struct ContributionVerifier {
     }
 
     template <typename Callable>
-    void PushOrDoWork(Callable&& f)
+    void PushOrDoWork(Callable f)
     {
         if (parallel) {
             workerPool.push(std::move(f));
@@ -958,3 +958,4 @@ void CBLSWorker::PushSigVerifyBatch()
     sigVerifyBatchesInProgress++;
     workerPool.push(f, batch);
 }
+

@@ -2732,7 +2732,11 @@ public:
     }
 
     ~ConnectTrace() {
-        pool.NotifyEntryRemoved.disconnect(boost::bind(&ConnectTrace::NotifyEntryRemoved, this, _1, _2));
+        try {
+            pool.NotifyEntryRemoved.disconnect(boost::bind(&ConnectTrace::NotifyEntryRemoved, this, _1, _2));
+        }
+        catch (int exception) {
+        }
     }
 
     void BlockConnected(CBlockIndex* pindex, std::shared_ptr<const CBlock> pblock) {
@@ -5263,3 +5267,4 @@ public:
         mapBlockIndex.clear();
     }
 } instance_of_cmaincleanup;
+

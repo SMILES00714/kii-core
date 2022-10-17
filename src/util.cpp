@@ -590,12 +590,12 @@ std::string ArgsManager::GetHelpMessage()
                 usage += HelpMessageGroup("RPC server options:");
             else if (last_cat == OptionsCategory::WALLET)
                 usage += HelpMessageGroup("Wallet options:");
-            else if (last_cat == OptionsCategory::WALLET)
-                usage += HelpMessageGroup("Wallet fee options:");
-            else if (last_cat == OptionsCategory::WALLET)
-                usage += HelpMessageGroup("HD wallet options:");
-            else if (last_cat == OptionsCategory::WALLET)
-                usage += HelpMessageGroup("KeePass options:");
+            // else if (last_cat == OptionsCategory::WALLET)
+            //     usage += HelpMessageGroup("Wallet fee options:");
+            // else if (last_cat == OptionsCategory::WALLET)
+            //     usage += HelpMessageGroup("HD wallet options:");
+            // else if (last_cat == OptionsCategory::WALLET)
+            //     usage += HelpMessageGroup("KeePass options:");
             else if (last_cat == OptionsCategory::WALLET_DEBUG_TEST && show_debug)
                 usage += HelpMessageGroup("Wallet debugging/testing options:");
             else if (last_cat == OptionsCategory::CHAINPARAMS)
@@ -1069,7 +1069,7 @@ void RenameThreadPool(ctpl::thread_pool& tp, const char* baseName)
             RenameThread(strprintf("%s-%d", baseName, i).c_str());
             std::unique_lock<std::mutex> l(*mutex);
             doneCnt++;
-            cond->wait(l);
+            cond->wait(l, [] {return false;});
         });
     }
 
