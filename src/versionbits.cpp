@@ -118,7 +118,10 @@ ThresholdState AbstractThresholdConditionChecker::GetStateFor(const CBlockIndex*
                     pindexCount = pindexCount->pprev;
                 }
                 assert(nStartHeight > 0 && nStartHeight < std::numeric_limits<int>::max());
-                int nAttempt = (pindexCount->nHeight + 1 - nStartHeight) / nPeriod;
+                int nAttempt = 0;
+                if (nPeriod != 0) {
+                    nAttempt = (pindexCount->nHeight + 1 - nStartHeight) / nPeriod;
+                }
                 if (count >= Threshold(params, nAttempt)) {
                     stateNext = ThresholdState::LOCKED_IN;
                 }
@@ -273,3 +276,4 @@ void VersionBitsCache::Clear()
         caches[d].clear();
     }
 }
+

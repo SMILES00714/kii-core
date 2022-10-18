@@ -273,13 +273,7 @@ struct Aggregator {
 
     void PushAggQueue(const T& v)
     {
-        auto copyT = new T(v);
-        try {
-            aggQueue.push(copyT);
-        } catch (...) {
-            delete copyT;
-            throw;
-        }
+        aggQueue.push(new T(v));
 
         if (++aggQueueSize >= batchSize) {
             // we've collected enough intermediate results to form a new batch.

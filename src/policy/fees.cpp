@@ -529,10 +529,17 @@ CBlockPolicyEstimator::CBlockPolicyEstimator()
 {
     static_assert(MIN_BUCKET_FEERATE > 0, "Min feerate must be nonzero");
     size_t bucketIndex = 0;
-    for (double bucketBoundary = MIN_BUCKET_FEERATE; bucketBoundary <= MAX_BUCKET_FEERATE; bucketBoundary *= FEE_SPACING, bucketIndex++) {
+    double bucketBoundary = MIN_BUCKET_FEERATE;
+    while (bucketBoundary <= MAX_BUCKET_FEERATE) {
         buckets.push_back(bucketBoundary);
         bucketMap[bucketBoundary] = bucketIndex;
+        bucketBoundary *= FEE_SPACING;
+        bucketIndex++;
     }
+    // for (double bucketBoundary = MIN_BUCKET_FEERATE; bucketBoundary <= MAX_BUCKET_FEERATE; bucketBoundary *= FEE_SPACING, bucketIndex++) {
+    //     buckets.push_back(bucketBoundary);
+    //     bucketMap[bucketBoundary] = bucketIndex;
+    // }
     buckets.push_back(INF_FEERATE);
     bucketMap[INF_FEERATE] = bucketIndex;
     assert(bucketMap.size() == buckets.size());
@@ -992,3 +999,4 @@ void CBlockPolicyEstimator::FlushUnconfirmed() {
     int64_t endclear = GetTimeMicros();
     LogPrint(BCLog::ESTIMATEFEE, "Recorded %u unconfirmed txs from mempool in %ld micros\n", num_entries, endclear - startclear);
 }
+

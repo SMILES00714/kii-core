@@ -21,7 +21,9 @@ typedef struct {
 } secp256k1_callback;
 
 static SECP256K1_INLINE void secp256k1_callback_call(const secp256k1_callback * const cb, const char * const text) {
-    cb->fn(text, (void*)cb->data);
+    if (cb != NULL) {
+        cb->fn(text, (void*)cb->data);
+    }
 }
 
 #ifdef DETERMINISTIC
@@ -119,3 +121,4 @@ SECP256K1_GNUC_EXT typedef unsigned __int128 uint128_t;
 #endif
 
 #endif /* SECP256K1_UTIL_H */
+

@@ -3713,9 +3713,19 @@ static bool ContextualCheckBlock(const CBlock& block, CValidationState& state, c
         nLockTimeFlags |= LOCKTIME_MEDIAN_TIME_PAST;
     }
 
-    int64_t nLockTimeCutoff = (nLockTimeFlags & LOCKTIME_MEDIAN_TIME_PAST)
-                              ? pindexPrev->GetMedianTimePast()
-                              : block.GetBlockTime();
+    int64_t nLockTimeCutoff = 0;
+    if (nLockTimeFlags & LOCKTIME_MEDIAN_TIME_PAST) {
+        if (pindexPrev != NULL) {
+            nLockTimeCutoff = pindexPrev->GetMedianTimePast();
+        }
+    }
+    else {
+        nLockTimeCutoff = block.GetBlockTime();
+    }
+
+    // int64_t nLockTimeCutoff = (nLockTimeFlags & LOCKTIME_MEDIAN_TIME_PAST)
+    //                           ? pindexPrev->GetMedianTimePast()
+    //                           : block.GetBlockTime();
 
     bool fDIP0001Active_context = nHeight >= consensusParams.DIP0001Height;
     bool fDIP0003Active_context = nHeight >= consensusParams.DIP0003Height;
@@ -4607,7 +4617,7 @@ bool CChainState::ReplayBlocks(const CChainParams& params, CCoinsView* view)
     auto dbTx = evoDb->BeginTransaction();
 
     // Rollback along the old branch.
-    while (pindexOld != pindexFork) {
+    if (pindexOld != pindexFork) {
         // TODO: RollforwardBlock should update not only coins but also evodb and additional indexes.
         // Disable recovery from a crash during a fork until this is implemented.
         return error("ReplayBlocks(): recovery from a db crash during a fork is not supported yet");

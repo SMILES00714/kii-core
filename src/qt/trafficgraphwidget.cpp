@@ -104,23 +104,39 @@ void TrafficGraphWidget::paintEvent(QPaintEvent *)
 
     // draw lines
     painter.setPen(axisCol);
-    for(float y = val; y < fMax; y += val) {
+    float y = val;
+    while (y < fMax) {
         int yy = YMARGIN + h - h * y / fMax;
         painter.drawLine(XMARGIN, yy, width() - XMARGIN, yy);
+        y += val;
     }
+    // for(float y = val; y < fMax; y += val) {
+    //     int yy = YMARGIN + h - h * y / fMax;
+    //     painter.drawLine(XMARGIN, yy, width() - XMARGIN, yy);
+    // }
     // if we drew 3 or fewer lines, break them up at the next lower order of magnitude
     if(fMax / val <= 3.0f) {
         axisCol2 = axisCol.darker();
         val2 = pow(10.0f, base - 1);
         painter.setPen(axisCol2);
         int count = 1;
-        for(float y = val2; y < fMax; y += val2, count++) {
+        float y = val2;
+        while (y < fMax) {
             // don't overwrite lines drawn above
             if(count % 10 == 0)
                 continue;
             int yy = YMARGIN + h - h * y / fMax;
             painter.drawLine(XMARGIN, yy, width() - XMARGIN, yy);
+            y += val2;
+            count++;
         }
+        // for(float y = val2; y < fMax; y += val2, count++) {
+        //     // don't overwrite lines drawn above
+        //     if(count % 10 == 0)
+        //         continue;
+        //     int yy = YMARGIN + h - h * y / fMax;
+        //     painter.drawLine(XMARGIN, yy, width() - XMARGIN, yy);
+        // }
     }
 
     const TrafficGraphData::SampleQueue& queue = trafficGraphData.getCurrentRangeQueueWithAverageBandwidth();
@@ -257,3 +273,4 @@ void TrafficGraphWidget::clear()
     }
     update();
 }
+

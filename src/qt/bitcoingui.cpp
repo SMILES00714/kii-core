@@ -1245,13 +1245,17 @@ void BitcoinGUI::setNumBlocks(int count, const QDateTime& blockDate, const QStri
     {
         if(secs < 25*60) // 90*60 in bitcoin
         {
-            modalOverlay->showHide(true, true);
-            // TODO instead of hiding it forever, we should add meaningful information about MN sync to the overlay
-            modalOverlay->hideForever();
+            if (modalOverlay != NULL) {
+                modalOverlay->showHide(true, true);
+                // TODO instead of hiding it forever, we should add meaningful information about MN sync to the overlay
+                modalOverlay->hideForever();
+            }
         }
         else
         {
-            modalOverlay->showHide();
+            if (modalOverlay != NULL) {
+                modalOverlay->showHide();
+            }
         }
     }
 #endif // ENABLE_WALLET
@@ -1850,4 +1854,5 @@ void UnitDisplayStatusBarControl::onMenuSelection(QAction* action)
         optionsModel->setDisplayUnit(action->data());
     }
 }
+
 

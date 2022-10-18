@@ -31,7 +31,7 @@ struct UniValueType {
     UniValueType(UniValue::VType _type) : typeAny(false), type(_type) {}
     UniValueType() : typeAny(true) {}
     bool typeAny;
-    UniValue::VType type;
+    UniValue::VType type = UniValue::VType::VNULL;
 };
 
 class JSONRPCRequest
@@ -209,3 +209,4 @@ void StopRPC();
 std::string JSONRPCExecBatch(const JSONRPCRequest& jreq, const UniValue& vReq);
 
 #endif // BITCOIN_RPC_SERVER_H
+

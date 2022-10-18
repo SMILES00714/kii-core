@@ -354,7 +354,11 @@ static void secp256k1_ecmult_context_clone(secp256k1_ecmult_context *dst,
 }
 
 static int secp256k1_ecmult_context_is_built(const secp256k1_ecmult_context *ctx) {
-    return ctx->pre_g != NULL;
+    if (ctx !=NULL) {
+        return ctx->pre_g != NULL;
+    }
+    else
+        return 0;
 }
 
 static void secp256k1_ecmult_context_clear(secp256k1_ecmult_context *ctx) {
@@ -1179,3 +1183,4 @@ static int secp256k1_ecmult_multi_var(const secp256k1_ecmult_context *ctx, secp2
 }
 
 #endif /* SECP256K1_ECMULT_IMPL_H */
+
