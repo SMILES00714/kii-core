@@ -1069,7 +1069,7 @@ void RenameThreadPool(ctpl::thread_pool& tp, const char* baseName)
             RenameThread(strprintf("%s-%d", baseName, i).c_str());
             std::unique_lock<std::mutex> l(*mutex);
             doneCnt++;
-            cond->wait(l, [] {return false;});
+            cond->wait(l, [] {return true;});
         });
     }
 

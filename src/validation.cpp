@@ -4439,7 +4439,12 @@ CVerifyDB::CVerifyDB()
 
 CVerifyDB::~CVerifyDB()
 {
-    uiInterface.ShowProgress("", 100, false);
+    try {
+        uiInterface.ShowProgress("", 100, false);
+    }
+    catch (int exception) {
+    }
+
 }
 
 bool CVerifyDB::VerifyDB(const CChainParams& chainparams, CCoinsView *coinsview, int nCheckLevel, int nCheckDepth)
@@ -4606,22 +4611,23 @@ bool CChainState::ReplayBlocks(const CChainParams& params, CCoinsView* view)
         // TODO: RollforwardBlock should update not only coins but also evodb and additional indexes.
         // Disable recovery from a crash during a fork until this is implemented.
         return error("ReplayBlocks(): recovery from a db crash during a fork is not supported yet");
-        if (pindexOld->nHeight > 0) { // Never disconnect the genesis block.
-            CBlock block;
-            if (!ReadBlockFromDisk(block, pindexOld, params.GetConsensus())) {
-                return error("RollbackBlock(): ReadBlockFromDisk() failed at %d, hash=%s", pindexOld->nHeight, pindexOld->GetBlockHash().ToString());
-            }
-            LogPrintf("Rolling back %s (%i)\n", pindexOld->GetBlockHash().ToString(), pindexOld->nHeight);
-            DisconnectResult res = DisconnectBlock(block, pindexOld, cache);
-            if (res == DISCONNECT_FAILED) {
-                return error("RollbackBlock(): DisconnectBlock failed at %d, hash=%s", pindexOld->nHeight, pindexOld->GetBlockHash().ToString());
-            }
-            // If DISCONNECT_UNCLEAN is returned, it means a non-existing UTXO was deleted, or an existing UTXO was
-            // overwritten. It corresponds to cases where the block-to-be-disconnect never had all its operations
-            // applied to the UTXO set. However, as both writing a UTXO and deleting a UTXO are idempotent operations,
-            // the result is still a version of the UTXO set with the effects of that block undone.
-        }
-        pindexOld = pindexOld->pprev;
+
+        // if (pindexOld->nHeight > 0) { // Never disconnect the genesis block.
+        //     CBlock block;
+        //     if (!ReadBlockFromDisk(block, pindexOld, params.GetConsensus())) {
+        //         return error("RollbackBlock(): ReadBlockFromDisk() failed at %d, hash=%s", pindexOld->nHeight, pindexOld->GetBlockHash().ToString());
+        //     }
+        //     LogPrintf("Rolling back %s (%i)\n", pindexOld->GetBlockHash().ToString(), pindexOld->nHeight);
+        //     DisconnectResult res = DisconnectBlock(block, pindexOld, cache);
+        //     if (res == DISCONNECT_FAILED) {
+        //         return error("RollbackBlock(): DisconnectBlock failed at %d, hash=%s", pindexOld->nHeight, pindexOld->GetBlockHash().ToString());
+        //     }
+        //     // If DISCONNECT_UNCLEAN is returned, it means a non-existing UTXO was deleted, or an existing UTXO was
+        //     // overwritten. It corresponds to cases where the block-to-be-disconnect never had all its operations
+        //     // applied to the UTXO set. However, as both writing a UTXO and deleting a UTXO are idempotent operations,
+        //     // the result is still a version of the UTXO set with the effects of that block undone.
+        // }
+        // pindexOld = pindexOld->pprev;
     }
 
     // Roll forward from the forking point to the new tip.

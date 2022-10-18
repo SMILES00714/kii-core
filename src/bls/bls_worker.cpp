@@ -273,7 +273,13 @@ struct Aggregator {
 
     void PushAggQueue(const T& v)
     {
-        aggQueue.push(new T(v));
+        auto copyT = new T(v);
+        try {
+            aggQueue.push(copyT);
+        } catch (...) {
+            delete copyT;
+            throw;
+        }
 
         if (++aggQueueSize >= batchSize) {
             // we've collected enough intermediate results to form a new batch.
@@ -587,10 +593,10 @@ struct ContributionVerifier {
     }
 
     template <typename Callable>
-    void PushOrDoWork(Callable f)
+    void PushOrDoWork(Callable&& f)
     {
         if (parallel) {
-            workerPool.push(std::move(f));
+            workerPool.push(std::forward<Callable>(f));
         } else {
             f(0);
         }
