@@ -108,8 +108,9 @@ public:
             std::unique_ptr<WorkItem> i;
             {
                 std::unique_lock<std::mutex> lock(cs);
-                while (running && queue.empty())
-                    cond.wait(lock, [this]{return !running;});
+                cond.wait(lock, [this] {return !(running && queue.empty());});
+                // while (running && queue.empty())
+                    // cond.wait(lock);
                 if (!running)
                     break;
                 i = std::move(queue.front());
